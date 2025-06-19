@@ -907,7 +907,7 @@ local taxiMissionsEnabled = false
 local currentOrder = nil
 local orderBlip = nil
 local waitingForAccept = false
-local orderTimeoutThread = nil
+local orderThread = nil
 local ORDER_TIMEOUT_MIN = 10
 local ORDER_TIMEOUT_MAX = 30
 
@@ -945,6 +945,7 @@ function TrySendNewOrder()
     waitingForAccept = true
 
     -- Метка на карте
+    if orderBlip then RemoveBlip(orderBlip) end
     orderBlip = AddBlipForCoord(pos.x, pos.y, pos.z)
     SetBlipSprite(orderBlip, 280)
     SetBlipColour(orderBlip, 5)
@@ -953,8 +954,9 @@ function TrySendNewOrder()
     AddTextComponentSubstringPlayerName("🚕 Новый заказ такси")
     EndTextCommandSetBlipName(orderBlip)
 
-    -- Рисуем 3D-текст на экране, не на точке!
-    CreateThread(function()
+    -- Запускаем поток ожидания принятия/отклонения заказа
+    if orderThread then TerminateThread(orderThread) end
+    orderThread = CreateThread(function()
         while waitingForAccept and taxiMissionsEnabled do
             DrawText3DCenter("~y~У вас новый заказ\n~g~[E]~w~ - принять  ~r~[Y]~w~ - отклонить")
             if IsControlJustReleased(0, 38) then -- E
@@ -978,8 +980,7 @@ function DrawText3DCenter(text)
     SetTextCentre(true)
     BeginTextCommandDisplayText("STRING")
     AddTextComponentSubstringPlayerName(text)
-    EndTextCommandDisplayText(0.5, 0.4) -- 0.5 по горизонтали (центр), 0.4 по вертикали (чуть выше центра)
-    -- Можно добавить фон:
+    EndTextCommandDisplayText(0.5, 0.4)
     local lines = 1
     for _ in string.gmatch(text, "\n") do lines = lines + 1 end
     DrawRect(0.5, 0.4 + 0.035 * (lines-1), 0.40, 0.07 * lines, 0, 0, 0, 120)
@@ -991,31 +992,36 @@ function RemoveOrderPreview()
         orderBlip = nil
     end
     waitingForAccept = false
-    currentOrder = nil
+    -- Не сбрасываем currentOrder тут!
 end
 
 function AcceptOrder()
     -- Проверяем, существует ли заказ и корректный индекс
-    if not currentOrder or not currentOrder.idx then
+    if not waitingForAccept or not currentOrder or not currentOrder.idx then
         QBCore.Functions.Notify("Ошибка: заказ не найден или истек!", "error")
-        waitingForAccept = false
-        RemoveOrderPreview() -- на всякий случай очищаем blip
+        RemoveOrderPreview()
+        currentOrder = nil
         return
     end
 
-    waitingForAccept = false  -- больше не ждём ответа
-    RemoveOrderPreview()      -- убираем blip и очищаем переменную
+    waitingForAccept = false
+    RemoveOrderPreview()
     -- Запускаем кастомную миссию для принятого заказа
     TriggerEvent("qb-taxi:client:DoTaxiNpc_custom", currentOrder.idx)
-    currentOrder = nil        -- сбрасываем ссылку на заказ (чтобы не было ошибок позже)
+    currentOrder = nil -- Сбрасываем только тут!
 end
 
 function DeclineOrder()
+    if not waitingForAccept then return end
+
     RemoveOrderPreview()
-    if orderTimeoutThread then TerminateThread(orderTimeoutThread) end
-    orderTimeoutThread = CreateThread(function()
-        local timeout = math.random(ORDER_TIMEOUT_MIN, ORDER_TIMEOUT_MAX)
-        QBCore.Functions.Notify("Вы отказались от заказа. Ожидание нового: "..timeout.." секунд", "primary")
+    waitingForAccept = false
+    if orderThread then TerminateThread(orderThread) end
+    currentOrder = nil
+    -- Таймаут перед новым заказом
+    local timeout = math.random(ORDER_TIMEOUT_MIN, ORDER_TIMEOUT_MAX)
+    QBCore.Functions.Notify("Вы отказались от заказа. Ожидание нового: "..timeout.." секунд", "primary")
+    CreateThread(function()
         Wait(timeout * 1000)
         TrySendNewOrder()
     end)
@@ -1059,9 +1065,9 @@ RegisterNetEvent("qb-taxi:client:DoTaxiNpc_custom", function(npcIdx)
                     local dist = #(pos - vector3(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z))
 
                     if dist < 25 then
-                        DrawMarker(0, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z - 1.0, 0,0,0, 0,0,0, 2.0,2.0,1.0, 255,255,0,90, false,true,2,false)
+                        DrawMarker(0, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z - 1.0, 0, 0, 0, 0, 0, 0, 2.0, 2.0, 1.0, 255, 255, 0, 90, false, true, 2, false)
                         if dist < 5 then
-                            DrawText3D(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z+1.0, "~g~[E]~w~ - посадить клиента")
+                            DrawText3D(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z + 1.0, "~y~[E] Посадить клиента")
                             if IsControlJustPressed(0, 38) then
                                 local veh = GetVehiclePedIsIn(ped, 0)
                                 local maxSeats, freeSeat = GetVehicleMaxNumberOfPassengers(veh)
@@ -1116,24 +1122,4 @@ ResetNpcTask = function()
     end
 end
 
--- 3D текст (на случай если вдруг где-то не подключен)
-if not DrawText3D then
-    function DrawText3D(x, y, z, text)
-        SetTextScale(0.35, 0.35)
-        SetTextFont(4)
-        SetTextProportional(1)
-        SetTextColour(255, 255, 255, 215)
-        BeginTextCommandDisplayText('STRING')
-        SetTextCentre(true)
-        AddTextComponentSubstringPlayerName(text)
-        SetDrawOrigin(x, y, z, 0)
-        EndTextCommandDisplayText(0.0, 0.0)
-        local factor = (string.len(text)) / 370
-        DrawRect(0.0, 0.0 + 0.0125, 0.017 + factor, 0.03, 0, 0, 0, 75)
-        ClearDrawOrigin()
-    end
-end
-
 -- === КОНЕЦ: НОВЫЕ ФУНКЦИИ ДЛЯ NPC МИССИЙ ===
-
--- ... [ваш оригинальный код ниже, включая RegisterNetEvent('qb-taxi:client:DoTaxiNpc', ...) и прочее]
