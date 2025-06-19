@@ -46,14 +46,6 @@ AddEventHandler('onResourceStart', function(resourceName)
     end
 end)
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    PlayerJob = QBCore.Functions.GetPlayerData().job
-    if Config.UseTarget then
-        setupTarget()
-        setupCabParkingLocation()
-    end
-end)
-
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 end)
@@ -441,12 +433,6 @@ function StopTaxiJobLoop()
     taxiJobActive = false
 end
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    PlayerJob = QBCore.Functions.GetPlayerData().job
-    if PlayerJob.onduty then
-        StartTaxiJobLoop()
-    end
-end)
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     if PlayerJob.onduty then
@@ -679,13 +665,6 @@ function StopTaxiJobLoop()
     taxiJobActive = false
 end
 
--- Пример: стартуем автоматическую работу когда вы на duty
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    PlayerJob = QBCore.Functions.GetPlayerData().job
-    if PlayerJob.onduty then
-        StartTaxiJobLoop()
-    end
-end)
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     if PlayerJob.onduty then
@@ -739,15 +718,6 @@ function DrawCenterPrompt(text)
     DrawRect(x, y + 0.025, 0.36, 0.06, 0, 0, 0, 180)
     EndTextCommandDisplayText(x, y)
 end
-
-RegisterNetEvent('qb-taxi:client:DeclineTaxiNpcOrder', function()
-    if PendingBlip then
-        RemoveBlip(PendingBlip)
-        PendingBlip = nil
-    end
-    PendingNpc = nil
-    QBCore.Functions.Notify("Вы отклонили заказ", "primary")
-end)
 
 RegisterNetEvent('qb-taxi:client:CancelTaxiNpc', function()
     if NpcData.Active then
