@@ -92,6 +92,15 @@ local function onDuty()
     end)
 end
 
+local function StartNextNpcOrderWithDelay()
+    CreateThread(function()
+        Wait(10000)
+        if PlayerJob and PlayerJob.onduty then
+            TriggerEvent('qb-taxi:client:DoTaxiNpc')
+        end
+    end)
+end
+
 local function ResetNpcTask()
     NpcData = {
         Active = false,
@@ -209,6 +218,7 @@ local function GetDeliveryLocation()
                             end
                             RemovePed(NpcData.Npc)
                             ResetNpcTask()
+							StartNextNpcOrderWithDelay()
                             break
                         end
                     end
@@ -375,13 +385,17 @@ local function ShowPreOrderOffer()
                 TriggerEvent('qb-taxi:client:StartNpcWithIndex', preOrderNpcIndex)
                 preOrderNpcIndex = nil
                 break
-            elseif IsControlJustPressed(0, 246) then -- Y
-                preOrderActive = false
-                if preOrderBlip then RemoveBlip(preOrderBlip) preOrderBlip = nil end
-                QBCore.Functions.Notify("Вы отклонили заказ", "error")
-                preOrderNpcIndex = nil
-                break
-            end
+elseif IsControlJustPressed(0, 246) then -- Y
+    preOrderActive = false
+    if preOrderBlip then RemoveBlip(preOrderBlip) preOrderBlip = nil end
+    QBCore.Functions.Notify("Вы отклонили заказ", "error")
+    preOrderNpcIndex = nil
+
+    -- Новый заказ через 15 секунд, если игрок на смене
+    StartNextNpcOrderWithDelay(15000)
+
+    break
+end
             Wait(1)
         end
         -- Дополнительная защита — удаляем blip если что-то пошло не так
@@ -917,6 +931,7 @@ function dropNpcPoly()
                     RemovePed(NpcData.Npc)
                     ResetNpcTask()
                     deliveryZone:destroy()
+					StartNextNpcOrderWithDelay()
 
                     -- Новый заказ через 10 секунд, если игрок на работе
                     CreateThread(function()
