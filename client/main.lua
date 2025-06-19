@@ -540,22 +540,6 @@ function closeMenuFull()
     exports['qb-menu']:closeMenu()
 end
 
--- Events
-RegisterNetEvent('qb-taxi:client:DoTaxiNpc', function()
-    if preOrderActive then
-        QBCore.Functions.Notify("У вас уже есть активный заказ!", "error")
-        return
-    end
-    if not PlayerJob.onduty then return end
-    if not whitelistedVehicle() then
-        QBCore.Functions.Notify(Lang:t('error.not_in_taxi'))
-        return
-    end
-    preOrderNpcIndex = math.random(1, #Config.NPCLocations.TakeLocations)
-    preOrderActive = true
-    ShowPreOrderOffer()
-end)
-
 RegisterNetEvent('qb-taxi:client:StartNpcWithIndex', function(npcIndex)
     if not PlayerJob.onduty then return end
     if whitelistedVehicle() then
@@ -573,31 +557,29 @@ RegisterNetEvent('qb-taxi:client:StartNpcWithIndex', function(npcIndex)
             RequestModel(model)
             while not HasModelLoaded(model) do Wait(0) end
 
-local pos = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc]
+            local pos = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc]
 
--- Загружаем коллизию
-RequestCollisionAtCoord(pos.x, pos.y, pos.z)
-while not HasCollisionLoadedAroundEntity(PlayerPedId()) do
-    Wait(10)
-end
+            -- Гарантируем загрузку коллизии земли
+            RequestCollisionAtCoord(pos.x, pos.y, pos.z)
+            while not HasCollisionLoadedAroundEntity(PlayerPedId()) do
+                Wait(10)
+            end
 
--- Получаем groundZ
-local found, groundZ
-local tries = 0
-repeat
-    found, groundZ = GetGroundZFor_3dCoord(pos.x, pos.y, pos.z + 50.0, 0)
-    Wait(10)
-    tries = tries + 1
-until found or tries > 100
-if not found then
-    groundZ = pos.z
-end
+            -- Получаем точную высоту земли
+            local found, groundZ
+            local tries = 0
+            repeat
+                found, groundZ = GetGroundZFor_3dCoord(pos.x, pos.y, pos.z + 50.0, 0)
+                Wait(10)
+                tries = tries + 1
+            until found or tries > 100
+            if not found then groundZ = pos.z end
 
-NpcData.Npc = CreatePed(3, model, pos.x, pos.y, groundZ, 0.0, true, true)
-PlaceObjectOnGroundProperly(NpcData.Npc)
-FreezeEntityPosition(NpcData.Npc, true)
+            local spawnZ = groundZ  -- вот тут определяем spawnZ
 
-
+            NpcData.Npc = CreatePed(3, model, pos.x, pos.y, spawnZ, 0.0, true, true)
+            PlaceObjectOnGroundProperly(NpcData.Npc)
+            FreezeEntityPosition(NpcData.Npc, true)
 
             if NpcData.NpcBlip ~= nil then
                 RemoveBlip(NpcData.NpcBlip)
@@ -626,7 +608,8 @@ FreezeEntityPosition(NpcData.Npc, true)
                                 DrawText3D(pos.x, pos.y, spawnZ + 1.0, Lang:t('info.pickup_npc'))
                                 if IsControlJustPressed(0, 38) then
                                     local veh = GetVehiclePedIsIn(ped, 0)
-                                    local maxSeats, freeSeat = GetVehicleMaxNumberOfPassengers(veh)
+                                    local maxSeats = GetVehicleMaxNumberOfPassengers(veh)
+                                    local freeSeat = 2 -- Обычно задний правый для такси
                                     for i = maxSeats - 1, 0, -1 do
                                         if IsVehicleSeatFree(veh, i) then
                                             freeSeat = i
@@ -644,20 +627,35 @@ FreezeEntityPosition(NpcData.Npc, true)
                                     })
                                     SendNUIMessage({
                                         action = 'toggleMeter'
-    ClearPedTasksImmediately(NpcData.Npc)
-FreezeEntityPosition(NpcData.Npc, false)
+                                    })
+                                    ClearPedTasksImmediately(NpcData.Npc)
+                                    FreezeEntityPosition(NpcData.Npc, false)
+                                    TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 1)
 
--- Найдем свободное место в машине (обычно заднее правое: seat = 2)
-local freeSeat = 2
-local veh = GetVehiclePedIsIn(PlayerPedId(), 0)
-local maxSeats = GetVehicleMaxNumberOfPassengers(veh)
-for i = maxSeats - 1, 0, -1 do
-    if IsVehicleSeatFree(veh, i) then
-        freeSeat = i
-        break
+                                    listenForVehicleDamage()
+                                    resetMeter()
+                                    QBCore.Functions.Notify(Lang:t('info.go_to_location'))
+                                    if NpcData.NpcBlip ~= nil then
+                                        RemoveBlip(NpcData.NpcBlip)
+                                    end
+                                    GetDeliveryLocation()
+                                    NpcData.NpcTaken = true
+                                end
+                            end
+                        end
+                        Wait(1)
+                    end
+                end)
+            end
+
+        else
+            QBCore.Functions.Notify(Lang:t('error.already_mission'))
+        end
+    else
+        QBCore.Functions.Notify(Lang:t('error.not_in_taxi'))
     end
-end
-    TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
+end)
+TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 1)
                                     listenForVehicleDamage()
                                     resetMeter()
                                     QBCore.Functions.Notify(Lang:t('info.go_to_location'))
