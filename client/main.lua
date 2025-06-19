@@ -573,15 +573,31 @@ RegisterNetEvent('qb-taxi:client:StartNpcWithIndex', function(npcIndex)
             RequestModel(model)
             while not HasModelLoaded(model) do Wait(0) end
 
-            local pos = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc]
-            -- Получаем Z координату земли
-            local groundZ, found = GetGroundZFor_3dCoord(pos.x, pos.y, pos.z, 0)
-            local spawnZ = found and groundZ or pos.z
+local pos = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc]
 
-            local groundZ = GetGroundZ(pos.x, pos.y, pos.z)
+-- Загружаем коллизию
+RequestCollisionAtCoord(pos.x, pos.y, pos.z)
+while not HasCollisionLoadedAroundEntity(PlayerPedId()) do
+    Wait(10)
+end
+
+-- Получаем groundZ
+local found, groundZ
+local tries = 0
+repeat
+    found, groundZ = GetGroundZFor_3dCoord(pos.x, pos.y, pos.z + 50.0, 0)
+    Wait(10)
+    tries = tries + 1
+until found or tries > 100
+if not found then
+    groundZ = pos.z
+end
+
 NpcData.Npc = CreatePed(3, model, pos.x, pos.y, groundZ, 0.0, true, true)
-            PlaceObjectOnGroundProperly(NpcData.Npc)
-            FreezeEntityPosition(NpcData.Npc, true)
+PlaceObjectOnGroundProperly(NpcData.Npc)
+FreezeEntityPosition(NpcData.Npc, true)
+
+
 
             if NpcData.NpcBlip ~= nil then
                 RemoveBlip(NpcData.NpcBlip)
@@ -628,9 +644,19 @@ NpcData.Npc = CreatePed(3, model, pos.x, pos.y, groundZ, 0.0, true, true)
                                     })
                                     SendNUIMessage({
                                         action = 'toggleMeter'
-                                    })
     ClearPedTasksImmediately(NpcData.Npc)
-    FreezeEntityPosition(NpcData.Npc, false)
+FreezeEntityPosition(NpcData.Npc, false)
+
+-- Найдем свободное место в машине (обычно заднее правое: seat = 2)
+local freeSeat = 2
+local veh = GetVehiclePedIsIn(PlayerPedId(), 0)
+local maxSeats = GetVehicleMaxNumberOfPassengers(veh)
+for i = maxSeats - 1, 0, -1 do
+    if IsVehicleSeatFree(veh, i) then
+        freeSeat = i
+        break
+    end
+end
     TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
                                     listenForVehicleDamage()
                                     resetMeter()
