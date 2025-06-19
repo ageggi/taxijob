@@ -101,6 +101,29 @@ local function StartNextNpcOrderWithDelay()
     end)
 end
 
+local function GetGroundZ(x, y, z)
+    -- Перебираем высоту с шагом вниз, чтобы найти землю
+    for i = 0, 20 do
+        local checkZ = z - i
+        local success, groundZ = GetGroundZFor_3dCoord(x, y, checkZ, 0)
+        if success and groundZ > 0.0 then
+            return groundZ
+        end
+    end
+
+    -- Пробуем RayCast (ShapeTest) вниз
+    local startZ = z + 10.0
+    local endZ = z - 50.0
+    local rayHandle = StartShapeTestRay(x, y, startZ, x, y, endZ, 1, 0, 0)
+    local _, hit, hitCoords = GetShapeTestResult(rayHandle)
+    if hit == 1 and hitCoords then
+        return hitCoords.z
+    end
+
+    -- Если не нашли — возвращаем исходную z (лучше чуть ниже)
+    return z - 1.0
+end
+
 local function ResetNpcTask()
     NpcData = {
         Active = false,
@@ -357,8 +380,7 @@ end
 
 local preOrderBlip = nil
 
-local function ShowPreOrderOffer()
-    -- Создаём blip на карте в точке NPC заказа
+function ShowPreOrderOffer()
     if preOrderNpcIndex and not preOrderBlip then
         local pos = Config.NPCLocations.TakeLocations[preOrderNpcIndex]
         preOrderBlip = AddBlipForCoord(pos.x, pos.y, pos.z)
@@ -370,14 +392,30 @@ local function ShowPreOrderOffer()
         BeginTextCommandSetBlipName('STRING')
         AddTextComponentString('🚕 Заказ клиента')
         EndTextCommandSetBlipName(preOrderBlip)
+        PlaySoundFrontend(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", true)
     end
 
-    -- Поток для показа предложения и обработки нажатий
     CreateThread(function()
         while preOrderActive do
-            -- Центр экрана — вместо DrawText3D лучше использовать exports['qb-core']:DrawText для нормального HUD, но пример ниже для простоты:
-            DrawText3D(0.5, 0.92, 1.0, "~y~Поступил заказ!~s~\n~g~[E]~s~ - принять | ~r~[Y]~s~ - отклонить")
-            -- Если хочешь можно заменить на: exports['qb-core']:DrawText("Поступил заказ! [E] - принять | [Y] - отклонить", "center")
+            -- Текст и фон на весь текст, не только на заголовок
+            local lines = {
+                "~y~Поступил заказ!~s~",
+                "~g~[E]~s~ - принять | ~r~[Y]~s~ - отклонить"
+            }
+            local fullText = table.concat(lines, "\n")
+            local x, y = 0.5, 0.915
+            local width = 0.34  -- немного шире чтобы точно покрыть оба ряда
+            local height = 0.072 -- чуть выше для двух строк
+
+            DrawRect(x, y, width, height, 0, 0, 0, 170)
+            SetTextFont(4)
+            SetTextProportional(1)
+            SetTextScale(0.45, 0.45)
+            SetTextColour(255,255,255,255)
+            SetTextCentre(true)
+            SetTextEntry("STRING")
+            AddTextComponentString(fullText)
+            DrawText(x, y - 0.018)
 
             if IsControlJustPressed(0, 38) then -- E
                 preOrderActive = false
@@ -385,33 +423,40 @@ local function ShowPreOrderOffer()
                 TriggerEvent('qb-taxi:client:StartNpcWithIndex', preOrderNpcIndex)
                 preOrderNpcIndex = nil
                 break
-elseif IsControlJustPressed(0, 246) then -- Y
-    preOrderActive = false
-    if preOrderBlip then RemoveBlip(preOrderBlip) preOrderBlip = nil end
-    QBCore.Functions.Notify("Вы отклонили заказ", "error")
-    preOrderNpcIndex = nil
-
-    -- Новый заказ через 15 секунд, если игрок на смене
-    StartNextNpcOrderWithDelay(15000)
-
-    break
-end
+            elseif IsControlJustPressed(0, 246) then -- Y
+                preOrderActive = false
+                if preOrderBlip then RemoveBlip(preOrderBlip) preOrderBlip = nil end
+                QBCore.Functions.Notify("Вы отклонили заказ", "error")
+                preOrderNpcIndex = nil
+                StartNextNpcOrderWithDelay(15000)
+                break
+            end
             Wait(1)
         end
-        -- Дополнительная защита — удаляем blip если что-то пошло не так
         if preOrderBlip then RemoveBlip(preOrderBlip) preOrderBlip = nil end
     end)
 end
 
 -- Функция для текста на экране (можно заменить на exports['qb-core']:DrawText)
 function DrawText3D(x, y, z, text)
-    SetTextFont(4)
-    SetTextProportional(1)
-    SetTextScale(0.45, 0.45)
-    SetTextColour(255, 255, 255, 215)
-    SetTextEntry("STRING")
-    AddTextComponentString(text)
-    DrawText(x, y)
+    local onScreen, _x, _y = World3dToScreen2d(x, y, z)
+    local scale = 0.45
+    if onScreen then
+        SetTextFont(4)
+        SetTextProportional(1)
+        SetTextScale(scale, scale)
+        SetTextColour(255, 255, 255, 255)
+        SetTextDropshadow(0, 0, 0, 0, 255)
+        SetTextEdge(2, 0, 0, 0, 150)
+        SetTextDropShadow()
+        SetTextOutline()
+        SetTextEntry("STRING")
+        AddTextComponentString(text)
+        -- ФОН
+        local width = (string.len(text) + 2) / 200
+        DrawRect(_x, _y + 0.011, width, 0.035, 0, 0, 0, 170) -- alpha 170 = полупрозрачный чёрный
+        DrawText(_x, _y)
+    end
 end
 
 -- Функция для показа текста в центре экрана (можно заменить на exports['qb-core']:DrawText если хочешь)
@@ -515,7 +560,6 @@ RegisterNetEvent('qb-taxi:client:StartNpcWithIndex', function(npcIndex)
     if not PlayerJob.onduty then return end
     if whitelistedVehicle() then
         if not NpcData.Active then
-            -- Задаём нужный индекс NPC
             NpcData.CurrentNpc = npcIndex or math.random(1, #Config.NPCLocations.TakeLocations)
             if NpcData.LastNpc ~= nil then
                 while NpcData.LastNpc ~= NpcData.CurrentNpc do
@@ -523,13 +567,19 @@ RegisterNetEvent('qb-taxi:client:StartNpcWithIndex', function(npcIndex)
                 end
             end
 
-            -- Генерация NPC
             local Gender = math.random(1, #Config.NpcSkins)
             local PedSkin = math.random(1, #Config.NpcSkins[Gender])
             local model = GetHashKey(Config.NpcSkins[Gender][PedSkin])
             RequestModel(model)
             while not HasModelLoaded(model) do Wait(0) end
-            NpcData.Npc = CreatePed(3, model, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z, 0.0, true, false)
+
+            local pos = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc]
+            -- Получаем Z координату земли
+            local groundZ, found = GetGroundZFor_3dCoord(pos.x, pos.y, pos.z, 0)
+            local spawnZ = found and groundZ or pos.z
+
+            local groundZ = GetGroundZ(pos.x, pos.y, pos.z)
+NpcData.Npc = CreatePed(3, model, pos.x, pos.y, groundZ, 0.0, true, true)
             PlaceObjectOnGroundProperly(NpcData.Npc)
             FreezeEntityPosition(NpcData.Npc, true)
 
@@ -539,28 +589,25 @@ RegisterNetEvent('qb-taxi:client:StartNpcWithIndex', function(npcIndex)
 
             QBCore.Functions.Notify(Lang:t('info.npc_on_gps'), 'success')
 
-            -- Если используется target-режим
             if Config.UseTarget then createNpcPickUpLocation() end
 
-            NpcData.NpcBlip = AddBlipForCoord(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z)
+            NpcData.NpcBlip = AddBlipForCoord(pos.x, pos.y, spawnZ)
             SetBlipColour(NpcData.NpcBlip, 3)
             SetBlipRoute(NpcData.NpcBlip, true)
             SetBlipRouteColour(NpcData.NpcBlip, 3)
             NpcData.LastNpc = NpcData.CurrentNpc
             NpcData.Active = true
 
-            -- Обычное поведение, если не target
             if not Config.UseTarget then
                 CreateThread(function()
                     while not NpcData.NpcTaken and NpcData.Active do
                         local ped = PlayerPedId()
-                        local pos = GetEntityCoords(ped)
-                        local dist = #(pos - vector3(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z))
-
+                        local playerPos = GetEntityCoords(ped)
+                        local dist = #(playerPos - vector3(pos.x, pos.y, spawnZ))
                         if dist < 25 then
-                            DrawMarker(0, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z - 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0, 1.0, 255, 255, 0, 100, false, true, 2, nil, nil, false)
+                            DrawMarker(0, pos.x, pos.y, spawnZ - 1.0, 0, 0, 0, 0, 0, 0, 3.0, 3.0, 1.0, 255, 255, 0, 100, false, true, 2, nil, nil, false)
                             if dist < 5 then
-                                DrawText3D(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z + 1.0, Lang:t('info.call_npc'))
+                                DrawText3D(pos.x, pos.y, spawnZ + 1.0, Lang:t('info.pickup_npc'))
                                 if IsControlJustPressed(0, 38) then
                                     local veh = GetVehiclePedIsIn(ped, 0)
                                     local maxSeats, freeSeat = GetVehicleMaxNumberOfPassengers(veh)
@@ -582,9 +629,9 @@ RegisterNetEvent('qb-taxi:client:StartNpcWithIndex', function(npcIndex)
                                     SendNUIMessage({
                                         action = 'toggleMeter'
                                     })
-                                    ClearPedTasksImmediately(NpcData.Npc)
-                                    FreezeEntityPosition(NpcData.Npc, false)
-                                    TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
+    ClearPedTasksImmediately(NpcData.Npc)
+    FreezeEntityPosition(NpcData.Npc, false)
+    TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
                                     listenForVehicleDamage()
                                     resetMeter()
                                     QBCore.Functions.Notify(Lang:t('info.go_to_location'))
