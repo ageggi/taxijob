@@ -410,19 +410,15 @@ local taxiJobActive = false
 -- Функция корректного спавна педа на земле
 -- Функция спавна педа на земле
 function SpawnPedOnGround(model, x, y, z, heading)
-    local spawnPed = CreatePed(3, model, x, y, z + 2.0, heading or 0.0, true, false)
-    Wait(50)
-    local found, groundZ
-    for i=1,20 do
-        found, groundZ = GetGroundZFor_3dCoord(x, y, z + 2.0, 0)
-        if found then break end
-        Wait(10)
-    end
+    -- Пытаемся найти землю на большой высоте (чтобы не застрять на крыше/дереве)
+    local testZ = z + 50.0
+    local found, groundZ = GetGroundZFor_3dCoord(x, y, testZ, 0)
     if found then
-        SetEntityCoords(spawnPed, x, y, groundZ, 0, 0, 0, true)
-    else
-        SetEntityCoords(spawnPed, x, y, z, 0, 0, 0, true)
+        z = groundZ
     end
+    -- Спавним педа на земле
+    local spawnPed = CreatePed(3, model, x, y, z, heading or 0.0, true, false)
+    SetEntityCoords(spawnPed, x, y, z, false, false, false, true)
     SetEntityHeading(spawnPed, heading or 0.0)
     return spawnPed
 end
@@ -444,6 +440,22 @@ end
 function StopTaxiJobLoop()
     taxiJobActive = false
 end
+
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    PlayerJob = QBCore.Functions.GetPlayerData().job
+    if PlayerJob.onduty then
+        StartTaxiJobLoop()
+    end
+end)
+RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
+    PlayerJob = JobInfo
+    if PlayerJob.onduty then
+        StartTaxiJobLoop()
+    else
+        StopTaxiJobLoop()
+        TriggerEvent('qb-taxi:client:CancelTaxiNpcFull')
+    end
+end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     PlayerJob = QBCore.Functions.GetPlayerData().job
@@ -661,20 +673,6 @@ function DrawText3D(x, y, z, text)
     SetDrawOrigin(x, y, z, 0)
     DrawText(0.0, 0.0)
     ClearDrawOrigin()
-end
-
--- Автоматический цикл заказов: стартовать один раз при duty on
-function StartTaxiJobLoop()
-    if taxiJobActive then return end
-    taxiJobActive = true
-    CreateThread(function()
-        while taxiJobActive do
-            Wait(15000)
-            if not NpcData.Active and not PendingNpc then
-                TriggerEvent('qb-taxi:client:DoTaxiNpc')
-            end
-        end
-    end)
 end
 
 function StopTaxiJobLoop()
