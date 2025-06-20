@@ -48,20 +48,46 @@ RegisterNetEvent("qb-taxi:server:SendTaxiAlert", function(address, x, y, z)
     TriggerClientEvent('QBCore:Notify', src, "Ваш запрос такси отправлен!", "success")
 end)
 
+
+-- Регистрируем событие для отмены заказа
+RegisterNetEvent("qb-taxi:server:CancelPlayerTaxiAlert", function(alertId)
+    local src = source
+    local alert = playerAlerts[alertId]
+    if alert then
+        -- Уведомляем всех таксистов, что заказ был отменён
+        local players = QBCore.Functions.GetPlayers()
+        for _, id in pairs(players) do
+            local Player = QBCore.Functions.GetPlayer(id)
+            if Player and Player.PlayerData.job.name == "taxi" and Player.PlayerData.job.onduty then
+                TriggerClientEvent("qb-taxi:client:PlayerTaxiAlertCanceled", id, alertId)
+            end
+        end
+
+        -- Удаляем заказ из списка активных заказов
+        playerAlerts[alertId] = nil
+    end
+end)
 -- Принятие вызова такси
 RegisterNetEvent("qb-taxi:server:AcceptPlayerTaxiAlert", function(alertId)
     local src = source
     local alert = playerAlerts[alertId]
+    
+    -- Проверка на существование заказа
     if not alert then
         TriggerClientEvent('QBCore:Notify', src, "Этот заказ уже недоступен", "error")
         return
     end
+    
+    -- Проверка на то, что заказ еще не принят
     if alert.acceptedBy then
         TriggerClientEvent('QBCore:Notify', src, "Заказ уже принят другим таксистом", "error")
         return
     end
+
+    -- Обновление состояния заказа
     alert.acceptedBy = src
 
+    -- Уведомление всех таксистов
     local players = QBCore.Functions.GetPlayers()
     for _, id in pairs(players) do
         local Player = QBCore.Functions.GetPlayer(id)
@@ -70,11 +96,10 @@ RegisterNetEvent("qb-taxi:server:AcceptPlayerTaxiAlert", function(alertId)
         end
     end
 
+    -- Уведомление клиента
     local driver = QBCore.Functions.GetPlayer(src)
-    local driverName = driver and driver.PlayerData.charinfo and driver.PlayerData.charinfo.firstname .. " " .. driver.PlayerData.charinfo.lastname or "Таксист"
+    local driverName = driver and driver.PlayerData.charinfo.firstname .. " " .. driver.PlayerData.charinfo.lastname or "Таксист"
     TriggerClientEvent('QBCore:Notify', alert.sender, "Таксист " .. driverName .. " принял ваш вызов!", "success")
-
-    playerAlerts[alertId] = nil
 end)
 
 -- Выплата за NPC заказы
