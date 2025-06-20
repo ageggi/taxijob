@@ -1174,6 +1174,12 @@ end, false)
 function TrySendNewOrder()
     if not taxiMissionsEnabled or waitingForAccept or (NpcData and NpcData.Active) or orderIncoming then return end
 
+    -- Очистка старого блипа перед созданием нового
+    if orderBlip then
+        RemoveBlip(orderBlip)
+        orderBlip = nil
+    end
+
     local locations = Config.NPCLocations.TakeLocations
     local idx = math.random(1, #locations)
     local pos = locations[idx]
@@ -1185,14 +1191,16 @@ function TrySendNewOrder()
     ShowTaxiOrderScreen(currentOrder)
 end
 
+
 function RemoveOrderPreview()
     if orderBlip ~= nil then
+        print("[DEBUG] Удаляем блип заказа") -- Лог для отладки
         RemoveBlip(orderBlip)
         orderBlip = nil
     end
     waitingForAccept = false
-    -- Не сбрасываем currentOrder тут!
 end
+
 
 function AcceptOrder()
     -- Проверяем, существует ли заказ и корректный индекс
@@ -1215,12 +1223,15 @@ function DeclineOrder()
 
     RemoveOrderPreview()
     waitingForAccept = false
+    orderIncoming = false -- Сбрасываем состояние
     if orderThread then TerminateThread(orderThread) orderThread = nil end
     currentOrder = nil
+    QBCore.Functions.Notify("Вы отказались от заказа", "primary")
+
     -- Таймаут перед новым заказом
     if taxiMissionsEnabled then
         local timeout = math.random(ORDER_RETRY_MIN, ORDER_RETRY_MAX)
-        QBCore.Functions.Notify("Вы отказались от заказа. Ожидание нового: "..timeout.." секунд", "primary")
+        QBCore.Functions.Notify("Ожидание нового заказа: " .. timeout .. " секунд", "primary")
         CreateThread(function()
             Wait(timeout * 1000)
             TrySendNewOrder()
@@ -1353,13 +1364,12 @@ end
 
 -- === КОНЕЦ: НОВЫЕ ФУНКЦИИ ДЛЯ NPC МИССИЙ ===
 
--- === РЕАЛЬНЫЕ ЗАКАЗЫ ОТ ИГРОКОВ ===
+local activePlayerAlerts = {}         -- hash: alertId => { данные }
+local activePlayerAlertBlips = {}     -- hash: alertId => blipId
+local currentPlayerAlert = nil        -- текущий открытый alertData
+local isPlayerAlertOpen = false       -- флаг, поток рисует окно только если true
 
-local activePlayerAlerts = {} -- hash: alertId => { данные }
-local activePlayerAlertBlips = {} -- hash: alertId => blipId
-local currentPlayerAlert = nil -- если сейчас открыт предзаказ
-
--- Команда вызова такси
+-- Команда вызова такси игроком
 RegisterCommand("taxialert", function()
     DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP8", "", "", "", "", "", 120)
     CreateThread(function()
@@ -1379,55 +1389,66 @@ end)
 
 -- Получение алерта таксистом (показывает окно предзаказа и маркер)
 RegisterNetEvent("qb-taxi:client:ReceivePlayerTaxiAlert", function(alertData)
-    -- Сохраняем все активные заказы для этого таксиста
-    activePlayerAlerts[alertData.id] = alertData
-    -- Показываем только если нет уже открытого окна
-    if not currentPlayerAlert then
-        OpenPlayerTaxiAlert(alertData)
+    -- Если уже есть такой alert, не пересоздаём блип
+    if not activePlayerAlerts[alertData.id] then
+        activePlayerAlerts[alertData.id] = alertData
+        -- Создаём маркер на карте для этого заказа
+        if not activePlayerAlertBlips[alertData.id] then
+            local blip = AddBlipForCoord(alertData.coords.x, alertData.coords.y, alertData.coords.z)
+            SetBlipSprite(blip, 198)
+            SetBlipColour(blip, 5)
+            SetBlipScale(blip, 0.9)
+            SetBlipAsShortRange(blip, false)
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentString("Вызов клиента: " .. alertData.address)
+            EndTextCommandSetBlipName(blip)
+            activePlayerAlertBlips[alertData.id] = blip
+        end
     end
-    -- Создаём маркер на карте для этого заказа
-    if not activePlayerAlertBlips[alertData.id] then
-        local blip = AddBlipForCoord(alertData.coords.x, alertData.coords.y, alertData.coords.z)
-        SetBlipSprite(blip, 198)
-        SetBlipColour(blip, 5)
-        SetBlipScale(blip, 0.9)
-        SetBlipAsShortRange(blip, false)
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentString("Вызов клиента: " .. alertData.address)
-        EndTextCommandSetBlipName(blip)
-        activePlayerAlertBlips[alertData.id] = blip
+    -- Если никакое окно не открыто — откроем окно этого alert'а
+    if not isPlayerAlertOpen then
+        OpenPlayerTaxiAlert(alertData)
     end
 end)
 
 function OpenPlayerTaxiAlert(alertData)
+    if isPlayerAlertOpen then return end
+    isPlayerAlertOpen = true
     currentPlayerAlert = alertData
+
     CreateThread(function()
-        local timer = 20 -- секунд на принятие
-        while timer > 0 and currentPlayerAlert == alertData do
+        local timer = 20
+        while timer > 0 and isPlayerAlertOpen and currentPlayerAlert == alertData do
             DrawPlayerTaxiAlertUI(alertData, timer)
             timer = timer - 0.02
             Wait(20)
-            if IsControlJustReleased(0, 38) then -- E
+            if IsControlJustReleased(0, 38) then -- [E]
                 TriggerServerEvent("qb-taxi:server:AcceptPlayerTaxiAlert", alertData.id)
+                -- окно закроется после подтверждения от сервера через PlayerTaxiAlertTaken
                 break
-            elseif IsControlJustReleased(0, 246) then -- Y
-                -- Удаляем маркер с карты
+            elseif IsControlJustReleased(0, 246) then -- [Y]
+                -- Удаляем маркер с карты только у себя!
                 if activePlayerAlertBlips[alertData.id] then
                     RemoveBlip(activePlayerAlertBlips[alertData.id])
                     activePlayerAlertBlips[alertData.id] = nil
                 end
+                -- Чистим только свой alert, не сервер
+                activePlayerAlerts[alertData.id] = nil
                 QBCore.Functions.Notify("Вы отказались от заказа", "primary")
+                isPlayerAlertOpen = false
+                currentPlayerAlert = nil
                 break
             end
         end
-        if currentPlayerAlert and currentPlayerAlert.id == alertData.id then
+        -- Закрываем окно, если оно ещё не закрыто
+        if isPlayerAlertOpen and currentPlayerAlert and currentPlayerAlert.id == alertData.id then
+            isPlayerAlertOpen = false
             currentPlayerAlert = nil
         end
     end)
 end
 
 function DrawPlayerTaxiAlertUI(alertData, timer)
-    -- UI в стиле DrawTaxiOrder, но текст про реального игрока
     local boxX, boxY = 0.87, 0.175
     local boxW, boxH = 0.34, 0.23
     local alpha = 210
@@ -1435,14 +1456,10 @@ function DrawPlayerTaxiAlertUI(alertData, timer)
     local padX = 0.017
     local padY = 0.018
     local lineH = 0.035
-
     DrawRect(boxX, boxY, boxW, boxH, 0, 0, 0, alpha)
     DrawRect(boxX, boxY, boxW + 0.005, boxH + 0.005, 255, 215, 60, borderAlpha)
-
     local leftX = boxX - boxW/2 + padX
     local curY = boxY - boxH/2 + padY
-
-    -- Заголовок
     SetTextFont(4)
     SetTextScale(0.73, 0.73)
     SetTextColour(180, 220, 255, 255)
@@ -1451,8 +1468,6 @@ function DrawPlayerTaxiAlertUI(alertData, timer)
     AddTextComponentSubstringPlayerName("Поступил заказ от игрока!")
     EndTextCommandDisplayText(leftX, curY)
     curY = curY + lineH + 0.005
-
-    -- Адрес
     SetTextFont(4)
     SetTextScale(0.55, 0.55)
     SetTextColour(255, 255, 255, 255)
@@ -1461,8 +1476,6 @@ function DrawPlayerTaxiAlertUI(alertData, timer)
     AddTextComponentSubstringPlayerName("Адрес: " .. alertData.address)
     EndTextCommandDisplayText(leftX, curY)
     curY = curY + lineH * 0.95
-
-    -- Таймер
     SetTextFont(4)
     SetTextScale(0.53, 0.53)
     SetTextColour(255, 200, 60, 255)
@@ -1471,12 +1484,8 @@ function DrawPlayerTaxiAlertUI(alertData, timer)
     AddTextComponentSubstringPlayerName(("Осталось: %d сек."):format(math.ceil(timer)))
     EndTextCommandDisplayText(leftX, curY)
     curY = curY + lineH * 1.0
-
-    -- Линия
     DrawRect(boxX, curY, boxW * 0.92, 0.0016, 255, 220, 80, 100)
     curY = curY + 0.013
-
-    -- Кнопки
     local btnY = curY + 0.009
     SetTextFont(4)
     SetTextScale(0.56, 0.56)
@@ -1494,10 +1503,11 @@ function DrawPlayerTaxiAlertUI(alertData, timer)
     EndTextCommandDisplayText(boxX + boxW/2 - padX - 0.13, btnY)
 end
 
--- Скрытие окна и маркеров если заказ принят другим
+-- Когда заказ принят другим/закрыт (или самим собой)
 RegisterNetEvent("qb-taxi:client:PlayerTaxiAlertTaken", function(alertId, takerSrc)
     -- Скрываем окно если оно открыто
     if currentPlayerAlert and currentPlayerAlert.id == alertId then
+        isPlayerAlertOpen = false
         currentPlayerAlert = nil
     end
     -- Удаляем маркер
@@ -1510,4 +1520,18 @@ RegisterNetEvent("qb-taxi:client:PlayerTaxiAlertTaken", function(alertId, takerS
     if GetPlayerServerId(PlayerId()) ~= takerSrc then
         QBCore.Functions.Notify("Заказ уже был принят другим таксистом", "error")
     end
+end)
+
+-- Для удаления блипа если игрок отменил свой вызов (сервер должен отправлять это событие всем таксистам)
+RegisterNetEvent("qb-taxi:client:PlayerTaxiAlertCanceled", function(alertId)
+    if currentPlayerAlert and currentPlayerAlert.id == alertId then
+        isPlayerAlertOpen = false
+        currentPlayerAlert = nil
+    end
+    if activePlayerAlertBlips[alertId] then
+        RemoveBlip(activePlayerAlertBlips[alertId])
+        activePlayerAlertBlips[alertId] = nil
+    end
+    activePlayerAlerts[alertId] = nil
+    QBCore.Functions.Notify("Клиент отменил вызов такси.", "error")
 end)
