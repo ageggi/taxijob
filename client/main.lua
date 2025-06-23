@@ -1,25 +1,18 @@
--- Variables
-
 local QBCore = exports['qb-core']:GetCoreObject()
-local meterIsOpen = false
-local meterActive = false
-local lastLocation = nil
 local PlayerJob = {}
+local meterIsOpen, meterActive, lastLocation = false, false, nil
 local jobRequired = Config.jobRequired
+local PendingOrder = false
+local PendingOrderData = nil
+local OrderAcceptKey = 246 -- Y
+local OrderDeclineKey = 249 -- N
 
--- used for polyzones
-local isInsidePickupZone = false
-local isInsideDropZone = false
-local Notified = false
-local isPlayerInsideZone = false
 
-local meterData = {
-    fareAmount = 6,
-    currentFare = 0,
-    distanceTraveled = 0,
-}
+-- Pending order system (предзаказы)
+local pendingOrder, pendingOrderActive, pendingPickupIndex, pendingBlip = false, false, nil, nil
+local notificationShown = false
 
-local NpcData = {
+NpcData = NpcData or {
     Active = false,
     CurrentNpc = nil,
     LastNpc = nil,
@@ -36,13 +29,260 @@ local NpcData = {
     CrashCount = 0
 }
 
--- events
---just to prevent some bug if the resource get restarted on production
-AddEventHandler('onResourceStart', function(resourceName)
-    PlayerJob = QBCore.Functions.GetPlayerData().job
-    if Config.UseTarget then
-        setupTarget()
-        setupCabParkingLocation()
+-- Utils
+local function whitelistedVehicle()
+    local veh = GetEntityModel(GetVehiclePedIsIn(PlayerPedId()))
+    for _, v in ipairs(Config.AllowedVehicles) do
+        if veh == GetHashKey(v.model) then return true end
+    end
+    return false
+end
+
+local function getValidNpcIndex()
+    local takeLocs = Config.NPCLocations and Config.NPCLocations.TakeLocations
+    if not takeLocs then return nil end
+    local keys = {}
+    for k, v in pairs(takeLocs) do
+        if v and (v.x or v[1]) and (v.y or v[2]) and (v.z or v[3]) then
+            table.insert(keys, k)
+        end
+    end
+    if #keys == 0 then return nil end
+    return keys[math.random(1, #keys)]
+end
+
+-- Функция для генерации нового предзаказа
+local function GenerateTaxiPreorder()
+    PendingOrder = true
+    -- Рандомная точка для NPC
+    local pickupId = math.random(1, #Config.NPCLocations.TakeLocations)
+    -- Не повторяем последнюю точку
+    if NpcData.LastNpc ~= nil and #Config.NPCLocations.TakeLocations > 1 then
+        while pickupId == NpcData.LastNpc do
+            pickupId = math.random(1, #Config.NPCLocations.TakeLocations)
+        end
+    end
+    PendingOrderData = {
+        pickupId = pickupId,
+        location = Config.NPCLocations.TakeLocations[pickupId]
+    }
+    -- Показываем уведомление справа вверху (или любым другим способом)
+    local preorderMsg
+    if Lang and Lang.t then
+        preorderMsg = Lang:t('info.preorder_request')
+    else
+        preorderMsg = ('[ПРЕДЗАКАЗ] Новый клиент: район ~y~%s~s~. Нажмите ~g~Y~s~ чтобы принять, ~r~N~s~ чтобы отклонить.')
+            :format(PendingOrderData.location.label or '???')
+    end
+    QBCore.Functions.Notify(preorderMsg, 'primary', 12000)
+end
+
+-- Функция для принятия заказа
+local function AcceptTaxiPreorder()
+    PendingOrder = false
+    if PendingOrderData then
+        -- Запускаем обычную миссию, но используем PendingOrderData.pickupId вместо random()
+        StartTaxiMissionWithPickup(PendingOrderData.pickupId)
+        PendingOrderData = nil
+    end
+end
+
+-- Функция для отклонения заказа
+local function DeclineTaxiPreorder()
+    PendingOrder = false
+    PendingOrderData = nil
+    -- Генерируем новый заказ, исключая только что предложенный pickupId (или тот же не предлагать дважды подряд)
+    GenerateTaxiPreorder()
+end
+
+-- Перехват нажатий клавиш для принятия/отклонения заказа
+CreateThread(function()
+    while true do
+        if PendingOrder then
+            -- Y принять
+            if IsControlJustReleased(0, OrderAcceptKey) then
+                AcceptTaxiPreorder()
+            end
+            -- N отклонить
+            if IsControlJustReleased(0, OrderDeclineKey) then
+                DeclineTaxiPreorder()
+            end
+        end
+        Wait(0)
+    end
+end)
+
+-- Основная миссия с новым входом (pickupId)
+function StartTaxiMissionWithPickup(pickupId)
+    -- Скопируйте всю логику из старого 'DoTaxiNpc', но замените random(1, #Config.NPCLocations.TakeLocations) на pickupId
+    if not PlayerJob.onduty then return end
+    if whitelistedVehicle() then
+        if not NpcData.Active then
+            NpcData.CurrentNpc = pickupId
+            NpcData.LastNpc = pickupId
+            -- остальной код как в RegisterNetEvent('qb-taxi:client:DoTaxiNpc'), только без random()
+            -- ... (см. ниже)
+            local Gender = math.random(1, #Config.NpcSkins)
+            local PedSkin = math.random(1, #Config.NpcSkins[Gender])
+            local model = GetHashKey(Config.NpcSkins[Gender][PedSkin])
+            RequestModel(model)
+            while not HasModelLoaded(model) do Wait(0) end
+            NpcData.Npc = CreatePed(3, model, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z, 0.0, true, false)
+            PlaceObjectOnGroundProperly(NpcData.Npc)
+            FreezeEntityPosition(NpcData.Npc, true)
+            if NpcData.NpcBlip ~= nil then
+                RemoveBlip(NpcData.NpcBlip)
+            end
+            QBCore.Functions.Notify(Lang:t('info.npc_on_gps'), 'success')
+            if Config.UseTarget then createNpcPickUpLocation() end
+            NpcData.NpcBlip = AddBlipForCoord(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z)
+            SetBlipColour(NpcData.NpcBlip, 3)
+            SetBlipRoute(NpcData.NpcBlip, true)
+            SetBlipRouteColour(NpcData.NpcBlip, 3)
+            NpcData.Active = true
+            -- остальной код как раньше (см. оригинальный DoTaxiNpc)
+            if not Config.UseTarget then
+                CreateThread(function()
+                    while not NpcData.NpcTaken and NpcData.Active do
+                        local ped = PlayerPedId()
+                        local pos = GetEntityCoords(ped)
+                        local dist = #(pos - vector3(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z))
+                        if dist < 25 then
+                            DrawMarker(0, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z+1.5, 0, 0, 0, 0, 0, 0, 2.0, 2.0, 1.0, 255, 255, 0, 100, false, true, 2, false, false, false, false)
+                            if dist < 5 then
+                                DrawText3D(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z+1.2, '[E] Посадить пассажира')
+                                if IsControlJustPressed(0, 38) then
+                                    local veh = GetVehiclePedIsIn(ped, 0)
+                                    local maxSeats, freeSeat = GetVehicleMaxNumberOfPassengers(veh)
+                                    for i = maxSeats - 1, 0, -1 do
+                                        if IsVehicleSeatFree(veh, i) then
+                                            freeSeat = i
+                                            break
+                                        end
+                                    end
+                                    meterIsOpen = true
+                                    meterActive = true
+                                    lastLocation = GetEntityCoords(PlayerPedId())
+                                    SendNUIMessage({
+                                        action = 'openMeter',
+                                        toggle = true,
+                                        meterData = Config.Meter
+                                    })
+                                    SendNUIMessage({
+                                        action = 'toggleMeter'
+                                    })
+                                    ClearPedTasksImmediately(NpcData.Npc)
+                                    FreezeEntityPosition(NpcData.Npc, false)
+                                    TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
+                                    listenForVehicleDamage()
+                                    resetMeter()
+                                    QBCore.Functions.Notify(Lang:t('info.go_to_location'))
+                                    if NpcData.NpcBlip ~= nil then
+                                        RemoveBlip(NpcData.NpcBlip)
+                                    end
+                                    GetDeliveryLocation()
+                                    NpcData.NpcTaken = true
+                                end
+                            end
+                        end
+                        Wait(1)
+                    end
+                end)
+            end
+        else
+            QBCore.Functions.Notify(Lang:t('error.already_mission'))
+        end
+    else
+        QBCore.Functions.Notify(Lang:t('error.not_in_taxi'))
+    end
+end
+
+local function PlayOrderSound()
+    PlaySoundFrontend(-1, "CONFIRM_BEEP", "HUD_MINI_GAME_SOUNDSET", true)
+end
+
+function StartOrderOffer()
+    if pendingOrder or meterActive then return end
+    pendingOrder = true
+    pendingPickupIndex = getValidNpcIndex()
+    if not pendingPickupIndex then
+        QBCore.Functions.Notify("Ошибка: не найдено ни одной точки для NPC!", "error")
+        pendingOrder = false
+        pendingOrderActive = false
+        return
+    end
+    if pendingBlip then RemoveBlip(pendingBlip) end
+    local loc = Config.NPCLocations.TakeLocations[pendingPickupIndex]
+    pendingBlip = AddBlipForCoord(loc.x or loc[1], loc.y or loc[2], loc.z or loc[3])
+    SetBlipSprite(pendingBlip, 280)
+    SetBlipColour(pendingBlip, 5)
+    SetBlipScale(pendingBlip, 0.85)
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentString("Потенциальный клиент")
+    EndTextCommandSetBlipName(pendingBlip)
+    pendingOrderActive = true
+    PlayOrderSound()
+end
+
+function CancelOrderOffer()
+    if pendingBlip then RemoveBlip(pendingBlip) end
+    pendingBlip = nil
+    pendingOrder = false
+    pendingPickupIndex = nil
+    pendingOrderActive = false
+    QBCore.Functions.Notify("Вы отказались от заказа. Новый будет через 30 сек.", "error")
+    Citizen.SetTimeout(30000, function()
+        if not pendingOrder and not meterActive then
+            StartRandomOrderTimer()
+        end
+    end)
+end
+
+function StartRandomOrderTimer()
+    local delay = math.random(30, 180)
+    Citizen.SetTimeout(delay * 1000, function()
+        if not pendingOrder and not meterActive and IsPedInAnyVehicle(PlayerPedId(), false) and whitelistedVehicle() then
+            StartOrderOffer()
+        end
+    end)
+end
+
+CreateThread(function()
+    while true do
+        Wait(1000)
+        if not pendingOrder and not meterActive and IsPedInAnyVehicle(PlayerPedId(), false) and whitelistedVehicle() then
+            StartRandomOrderTimer()
+            while pendingOrder or meterActive do
+                Wait(2000)
+            end
+        end
+    end
+end)
+
+-- HUD уведомление и обработка клавиш
+CreateThread(function()
+    while true do
+        Wait(0)
+        if pendingOrderActive and IsPedInAnyVehicle(PlayerPedId(), false) and whitelistedVehicle() then
+            if not notificationShown then
+                QBCore.Functions.Notify("У вас есть новый заказ. Принять [E] | Отклонить [Y]", "primary", 6000)
+                notificationShown = true
+            end
+            if IsControlJustPressed(0, 38) then -- E
+                pendingOrderActive = false
+                pendingOrder = false
+                notificationShown = false
+                if pendingBlip then RemoveBlip(pendingBlip) end
+                TriggerEvent('qb-taxi:client:DoTaxiNpc', pendingPickupIndex)
+                pendingPickupIndex = nil
+            elseif IsControlJustPressed(0, 246) then -- Y
+                pendingOrderActive = false
+                notificationShown = false
+                CancelOrderOffer()
+            end
+        else
+            notificationShown = false
+        end
     end
 end)
 
@@ -126,7 +366,7 @@ local function IsDriver()
     return GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId(), false), -1) == PlayerPedId()
 end
 
-function DrawText3D(x, y, z, text)
+local function DrawText3D(x, y, z, text)
     SetTextScale(0.35, 0.35)
     SetTextFont(4)
     SetTextProportional(1)
@@ -400,105 +640,299 @@ function closeMenuFull()
     exports['qb-menu']:closeMenu()
 end
 
--- Events
-RegisterNetEvent('qb-taxi:client:DoTaxiNpc', function()
-    if not PlayerJob.onduty then return end
-    if whitelistedVehicle() then
-        if not NpcData.Active then
-            NpcData.CurrentNpc = math.random(1, #Config.NPCLocations.TakeLocations)
-            if NpcData.LastNpc ~= nil then
-                while NpcData.LastNpc ~= NpcData.CurrentNpc do
-                    NpcData.CurrentNpc = math.random(1, #Config.NPCLocations.TakeLocations)
-                end
-            end
+-- === НАЧАЛО: НОВЫЕ ФУНКЦИИ ДЛЯ NPC МИССИЙ ===
 
-            local Gender = math.random(1, #Config.NpcSkins)
-            local PedSkin = math.random(1, #Config.NpcSkins[Gender])
-            local model = GetHashKey(Config.NpcSkins[Gender][PedSkin])
-            RequestModel(model)
-            while not HasModelLoaded(model) do Wait(0) end
-local x = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x
-local y = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y
-local z = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z
-local spawnZ = z - 0.1
+-- Переменные для системы заказов
+local taxiMissionsEnabled = false
+local currentOrder = nil
+local orderBlip = nil
+local waitingForAccept = false
+local orderIncoming = false
+local orderData = nil
+local orderTimer = 0
+local orderTimeout = 15 -- секунд на принятие
+local orderAcceptKey = 38 -- E
+local orderDeclineKey = 246 -- Y
+local ORDER_RETRY_MIN = 15
+local ORDER_RETRY_MAX = 180
 
-NpcData.Npc = CreatePed(3, model, x, y, spawnZ, 0.0, true, false)
-PlaceObjectOnGroundProperly(NpcData.Npc)
-FreezeEntityPosition(NpcData.Npc, true)
-            if NpcData.NpcBlip ~= nil then
-                RemoveBlip(NpcData.NpcBlip)
-            end
-            QBCore.Functions.Notify(Lang:t('info.npc_on_gps'), 'success')
-
-            -- added checks to disable distance checking if polyzone option is used
-            if Config.UseTarget then createNpcPickUpLocation() end
-
-            NpcData.NpcBlip = AddBlipForCoord(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z)
-            SetBlipColour(NpcData.NpcBlip, 3)
-            SetBlipRoute(NpcData.NpcBlip, true)
-            SetBlipRouteColour(NpcData.NpcBlip, 3)
-            NpcData.LastNpc = NpcData.CurrentNpc
-            NpcData.Active = true
-            -- added checks to disable distance checking if polyzone option is used
-            if not Config.UseTarget then
-                CreateThread(function()
-                    while not NpcData.NpcTaken and NpcData.Active do
-                        local ped = PlayerPedId()
-                        local pos = GetEntityCoords(ped)
-                        local dist = #(pos - vector3(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z))
-
-                        if dist < 25 then
-                            DrawMarker(0, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z + 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 255, 0, 0, 255, 1, 0, 0, 1, 0, 0, 0)
-
-                            if dist < 5 then
-                                DrawText3D(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z, Lang:t('info.call_npc'))
-                                if IsControlJustPressed(0, 38) then
-                                    local veh = GetVehiclePedIsIn(ped, 0)
-                                    local maxSeats, freeSeat = GetVehicleMaxNumberOfPassengers(veh)
-
-                                    for i = maxSeats - 1, 0, -1 do
-                                        if IsVehicleSeatFree(veh, i) then
-                                            freeSeat = i
-                                            break
-                                        end
-                                    end
-
-                                    meterIsOpen = true
-                                    meterActive = true
-                                    lastLocation = GetEntityCoords(PlayerPedId())
-                                    SendNUIMessage({
-                                        action = 'openMeter',
-                                        toggle = true,
-                                        meterData = Config.Meter
-                                    })
-                                    SendNUIMessage({
-                                        action = 'toggleMeter'
-                                    })
-                                    ClearPedTasksImmediately(NpcData.Npc)
-                                    FreezeEntityPosition(NpcData.Npc, false)
-                                    TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
-                                    listenForVehicleDamage()
-                                    resetMeter()
-                                    QBCore.Functions.Notify(Lang:t('info.go_to_location'))
-                                    if NpcData.NpcBlip ~= nil then
-                                        RemoveBlip(NpcData.NpcBlip)
-                                    end
-                                    GetDeliveryLocation()
-                                    NpcData.NpcTaken = true
-                                end
-                            end
-                        end
-                        Wait(1)
-                    end
-                end)
-            end
-        else
-            QBCore.Functions.Notify(Lang:t('error.already_mission'))
+-- Показывает экран заказа (правый верхний угол)
+function ShowTaxiOrderScreen(order)
+    orderIncoming = true
+    orderData = order
+    orderTimer = orderTimeout
+    PlaySoundFrontend(-1, "CONFIRM_BEEP", "HUD_MINI_GAME_SOUNDSET", 1)
+    -- Новый блип
+    if orderBlip then RemoveBlip(orderBlip) end
+    orderBlip = AddBlipForCoord(order.pos.x, order.pos.y, order.pos.z)
+    SetBlipSprite(orderBlip, 280)
+    SetBlipColour(orderBlip, 5)
+    SetBlipScale(orderBlip, 0.8)
+    SetBlipDisplay(orderBlip, 4)
+    SetBlipAsShortRange(orderBlip, false)
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentString("Заказ такси")
+    EndTextCommandSetBlipName(orderBlip)
+    -- Таймер на принятие
+    CreateThread(function()
+        while orderIncoming and orderTimer > 0 do
+            Wait(1000)
+            orderTimer = orderTimer - 1
         end
-    else
-        QBCore.Functions.Notify(Lang:t('error.not_in_taxi'))
+        if orderIncoming then
+            orderIncoming = false
+            QBCore.Functions.Notify("Время на принятие заказа истекло", "primary")
+            DeclineOrder()
+        end
+    end)
+end
+
+-- Отрисовка окна заказа
+function DrawTaxiOrder()
+    if not orderIncoming or not orderData then return end
+
+    local zoneName = GetLabelText(GetNameOfZone(orderData.pos.x, orderData.pos.y, orderData.pos.z))
+    local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(orderData.pos.x, orderData.pos.y, orderData.pos.z))
+    local timerStr = ("Осталось: %d сек."):format(orderTimer)
+
+    -- Окно справа вверху
+    local boxX, boxY, boxW, boxH = 0.87, 0.175, 0.32, 0.25
+    DrawRect(boxX, boxY, boxW, boxH, 0, 0, 0, 210)
+    DrawRect(boxX, boxY, boxW + 0.005, boxH + 0.005, 255, 215, 60, 140)
+    local leftX = boxX - boxW/2 + 0.018
+    local curY = boxY - boxH/2 + 0.022
+    local lineH = 0.035
+
+    SetTextFont(4) SetTextScale(0.73, 0.73) SetTextColour(255,220,80,255) SetTextOutline()
+    BeginTextCommandDisplayText("STRING") AddTextComponentString("Новый заказ такси!") EndTextCommandDisplayText(leftX, curY)
+    curY = curY + lineH + 0.005
+    SetTextFont(4) SetTextScale(0.53, 0.53) SetTextColour(255,180,60,255) SetTextOutline()
+    BeginTextCommandDisplayText("STRING") AddTextComponentString("Район: ~w~"..zoneName) EndTextCommandDisplayText(leftX, curY)
+    curY = curY + lineH * 0.9
+    SetTextFont(4) SetTextScale(0.53, 0.53) SetTextColour(255,255,255,255) SetTextOutline()
+    BeginTextCommandDisplayText("STRING") AddTextComponentString("Улица: ~w~"..streetName) EndTextCommandDisplayText(leftX, curY)
+    curY = curY + lineH * 0.9
+    SetTextFont(4) SetTextScale(0.54, 0.54) SetTextColour(255,200,40,255) SetTextOutline()
+    BeginTextCommandDisplayText("STRING") AddTextComponentString(timerStr) EndTextCommandDisplayText(leftX, curY)
+    curY = curY + lineH * 0.95
+    DrawRect(boxX, curY, boxW * 0.92, 0.0016, 255, 220, 80, 100)
+    curY = curY + 0.013
+    local btnY = curY + 0.009
+    SetTextFont(4) SetTextScale(0.56, 0.56) SetTextColour(80,220,100,255) SetTextOutline()
+    BeginTextCommandDisplayText("STRING") AddTextComponentString("[E] Принять") EndTextCommandDisplayText(leftX, btnY)
+    SetTextFont(4) SetTextScale(0.56, 0.56) SetTextColour(220,90,90,255) SetTextOutline()
+    BeginTextCommandDisplayText("STRING") AddTextComponentString("[Y] Отклонить") EndTextCommandDisplayText(boxX + boxW/2 - 0.13, btnY)
+end
+
+-- Отрисовка и обработка кнопок
+CreateThread(function()
+    while true do
+        if orderIncoming then
+            DrawTaxiOrder()
+            if IsControlJustReleased(0, orderAcceptKey) then
+                orderIncoming = false
+                AcceptOrder()
+            elseif IsControlJustReleased(0, orderDeclineKey) then
+                orderIncoming = false
+                DeclineOrder()
+            end
+            Wait(0)
+        else
+            Wait(200)
+        end
     end
 end)
+
+-- Команды для включения/выключения миссий
+RegisterCommand("taximissions", function()
+    if not taxiMissionsEnabled then
+        taxiMissionsEnabled = true
+        QBCore.Functions.Notify("NPC заказы такси включены", "success")
+        TrySendNewOrder()
+    else
+        QBCore.Functions.Notify("NPC заказы уже включены", "error")
+    end
+end, false)
+RegisterCommand("taximissions_off", function()
+    taxiMissionsEnabled = false
+    if orderBlip then RemoveBlip(orderBlip) orderBlip = nil end
+    waitingForAccept = false
+    orderIncoming = false
+    orderData = nil
+    orderTimer = 0
+    currentOrder = nil
+    if NpcData then
+        if NpcData.NpcBlip then RemoveBlip(NpcData.NpcBlip) NpcData.NpcBlip = nil end
+        if NpcData.DeliveryBlip then RemoveBlip(NpcData.DeliveryBlip) NpcData.DeliveryBlip = nil end
+        if NpcData.Npc and DoesEntityExist(NpcData.Npc) then SetEntityAsMissionEntity(NpcData.Npc, false, true) DeleteEntity(NpcData.Npc) NpcData.Npc = nil end
+        NpcData.Active = false NpcData.NpcTaken = false NpcData.NpcDelivered = false NpcData.CurrentNpc = nil NpcData.LastNpc = nil NpcData.CurrentDeliver = nil NpcData.LastDeliver = nil NpcData.CrashCount = 0 NpcData.CountDown = 180
+    end
+    meterIsOpen = false meterActive = false resetMeter()
+    QBCore.Functions.Notify("NPC заказы такси выключены", "primary")
+end, false)
+
+-- Запуск нового заказа если можно
+function TrySendNewOrder()
+    if not taxiMissionsEnabled or waitingForAccept or (NpcData and NpcData.Active) or orderIncoming then return end
+    local locations = Config.NPCLocations.TakeLocations
+    local idx = math.random(1, #locations)
+    local pos = locations[idx]
+    currentOrder = { idx = idx, pos = pos }
+    waitingForAccept = true
+    ShowTaxiOrderScreen(currentOrder)
+end
+
+function RemoveOrderPreview()
+    if orderBlip then RemoveBlip(orderBlip) orderBlip = nil end
+    waitingForAccept = false
+end
+
+function AcceptOrder()
+    if not waitingForAccept or not currentOrder or not currentOrder.idx then
+        QBCore.Functions.Notify("Ошибка: заказ не найден или истек!", "error")
+        RemoveOrderPreview()
+        currentOrder = nil
+        return
+    end
+    waitingForAccept = false
+    RemoveOrderPreview()
+    -- Запускаем миссию с выбранным индексом точки
+    TriggerEvent("qb-taxi:client:DoTaxiNpc_custom", currentOrder.idx)
+    currentOrder = nil
+end
+
+function DeclineOrder()
+    if not waitingForAccept then return end
+    RemoveOrderPreview()
+    waitingForAccept = false
+    currentOrder = nil
+    if taxiMissionsEnabled then
+        local timeout = math.random(ORDER_RETRY_MIN, ORDER_RETRY_MAX)
+        QBCore.Functions.Notify("Вы отказались от заказа. Ожидание нового: "..timeout.." сек.", "primary")
+        CreateThread(function()
+            Wait(timeout * 1000)
+            TrySendNewOrder()
+        end)
+    end
+end
+
+-- Новый и единственный обработчик миссии
+RegisterNetEvent("qb-taxi:client:DoTaxiNpc_custom", function(npcIdx)
+    -- Используем всегда актуальные данные о смене!
+    local playerData = QBCore.Functions.GetPlayerData()
+    if not (playerData and playerData.job and playerData.job.onduty) then
+        QBCore.Functions.Notify("Вы не на смене!", "error")
+        return
+    end
+    if not whitelistedVehicle() then
+        QBCore.Functions.Notify("Вы не в служебном такси!", "error")
+        return
+    end
+    if NpcData.Active then
+        QBCore.Functions.Notify("У вас уже есть активная миссия!", "error")
+        return
+    end
+
+    if npcIdx and Config.NPCLocations.TakeLocations[npcIdx] then
+        NpcData.CurrentNpc = npcIdx
+    else
+        NpcData.CurrentNpc = math.random(1, #Config.NPCLocations.TakeLocations)
+    end
+
+    local Gender = math.random(1, #Config.NpcSkins)
+    local PedSkin = math.random(1, #Config.NpcSkins[Gender])
+    local model = GetHashKey(Config.NpcSkins[Gender][PedSkin])
+    RequestModel(model)
+    while not HasModelLoaded(model) do Wait(0) end
+    local x = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x
+    local y = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y
+    local z = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z
+    local spawnZ = z - 0.1
+    NpcData.Npc = CreatePed(3, model, x, y, spawnZ, 0.0, true, false)
+    PlaceObjectOnGroundProperly(NpcData.Npc)
+    FreezeEntityPosition(NpcData.Npc, true)
+    if NpcData.NpcBlip then RemoveBlip(NpcData.NpcBlip) end
+    QBCore.Functions.Notify("Клиент отмечен на GPS", 'success')
+    NpcData.NpcBlip = AddBlipForCoord(x, y, z)
+    SetBlipColour(NpcData.NpcBlip, 3)
+    SetBlipRoute(NpcData.NpcBlip, true)
+    SetBlipRouteColour(NpcData.NpcBlip, 3)
+    NpcData.LastNpc = NpcData.CurrentNpc
+    NpcData.Active = true
+
+    CreateThread(function()
+        while not NpcData.NpcTaken and NpcData.Active do
+            local ped = PlayerPedId()
+            local pos = GetEntityCoords(ped)
+            local dist = #(pos - vector3(x, y, z))
+            if dist < 25 then
+                DrawMarker(0, x, y, z - 1.0, 0,0,0,0,0,0, 2.0,2.0,1.0, 255,255,0,90, false,true,2,false)
+                if dist < 5 then
+                    DrawText3D(x, y, z + 1.0, "~y~[E] Посадить клиента")
+                    if IsControlJustPressed(0, 38) then
+                        local veh = GetVehiclePedIsIn(ped, 0)
+                        local maxSeats, freeSeat = GetVehicleMaxNumberOfPassengers(veh)
+                        for i = maxSeats - 1, 0, -1 do
+                            if IsVehicleSeatFree(veh, i) then
+                                freeSeat = i
+                                break
+                            end
+                        end
+                        meterIsOpen = true
+                        meterActive = true
+                        lastLocation = GetEntityCoords(PlayerPedId())
+                        SendNUIMessage({ action = 'openMeter', toggle = true, meterData = Config.Meter })
+                        SendNUIMessage({ action = 'toggleMeter' })
+                        ClearPedTasksImmediately(NpcData.Npc)
+                        FreezeEntityPosition(NpcData.Npc, false)
+                        TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
+                        listenForVehicleDamage()
+                        resetMeter()
+                        QBCore.Functions.Notify("Отвезите клиента по адресу")
+                        if NpcData.NpcBlip then RemoveBlip(NpcData.NpcBlip) end
+                        GetDeliveryLocation()
+                        NpcData.NpcTaken = true
+                    end
+                end
+            end
+            Wait(1)
+        end
+    end)
+end)
+
+-- После поездки — новый заказ!
+-- Исходная функция (убери local)
+function ResetNpcTask()
+    NpcData.Active = false
+    NpcData.CurrentNpc = nil
+    NpcData.LastNpc = nil
+    NpcData.CurrentDeliver = nil
+    NpcData.LastDeliver = nil
+    NpcData.Npc = nil
+    NpcData.NpcBlip = nil
+    NpcData.DeliveryBlip = nil
+    NpcData.NpcTaken = false
+    NpcData.NpcDelivered = false
+    NpcData.CountDown = 180
+    NpcData.startingLength = 0
+    NpcData.distanceLeft = 0
+    NpcData.CrashCount = 0
+end
+
+-- Переопределение
+local _orig_ResetNpcTask = ResetNpcTask
+function ResetNpcTask()
+    _orig_ResetNpcTask()
+    if taxiMissionsEnabled then
+        local timeout = math.random(ORDER_RETRY_MIN, ORDER_RETRY_MAX)
+        CreateThread(function()
+            Wait(timeout * 1000)
+            TrySendNewOrder()
+        end)
+    end
+end
+
+-- === КОНЕЦ: НОВЫЕ ФУНКЦИИ ДЛЯ NPC МИССИЙ ===
 
 RegisterNetEvent('qb-taxi:client:CancelTaxiNpc', function()
     if NpcData.Active then
@@ -902,416 +1336,3 @@ CreateThread(function()
         end
     end)
 end)
-
--- ... [ваш оригинальный код выше]
-
--- ... [весь ваш предыдущий код выше без изменений]
-
--- === НАЧАЛО: НОВЫЕ ФУНКЦИИ ДЛЯ NPC МИССИЙ ===
-
--- Переменные для системы заказов
-local taxiMissionsEnabled = false
-local currentOrder = nil
-local orderBlip = nil
-local waitingForAccept = false
-local orderThread = nil
-local ORDER_TIMEOUT_MIN = 10
-local ORDER_TIMEOUT_MAX = 30
-
--- Интервал между заказами: от 15 до 180 секунд (3 минуты)
-local ORDER_RETRY_MIN = 15
-local ORDER_RETRY_MAX = 180
-
--- === ТАКСИ-НАВИГАТОР: ЭКРАН ПРИХОДА ЗАКАЗА ===
-local orderIncoming = false
-local orderData = nil
-local orderTimer = 0
-local orderTimeout = 10 -- секунд на принятие
-local orderAcceptKey = 38 -- E
-local orderDeclineKey = 246 -- Y
-
-local NAV_BG_COLOR = {0, 0, 0, 190}
-local NAV_WIDTH = 0.50
-local NAV_HEIGHT = 0.19
-local NAV_Y = 0.15
-local NAV_HEADER_COLOR = {255, 200, 40, 255}
-local NAV_HEADER_SHADOW = {0, 0, 0, 200}
-local NAV_TEXT_COLOR = {255,255,255,255}
-local NAV_TEXT_SHADOW = {0,0,0,200}
-
-function ShowTaxiOrderScreen(order)
-    orderIncoming = true
-    orderData = order
-    orderTimer = orderTimeout
-    PlaySoundFrontend(-1, "CONFIRM_BEEP", "HUD_MINI_GAME_SOUNDSET", 1)
-    -- Новый код для блипа:
-    if orderBlip then
-        RemoveBlip(orderBlip)
-        orderBlip = nil
-    end
-    orderBlip = AddBlipForCoord(order.pos.x, order.pos.y, order.pos.z)
-    SetBlipSprite(orderBlip, 280)
-    SetBlipColour(orderBlip, 5)
-    SetBlipScale(orderBlip, 0.8)
-    SetBlipDisplay(orderBlip, 4)
-    SetBlipAsShortRange(orderBlip, false)
-    BeginTextCommandSetBlipName("STRING")
-    AddTextComponentString("Заказ такси")
-    EndTextCommandSetBlipName(orderBlip)
-    --
-    CreateThread(function()
-        while orderIncoming and orderTimer > 0 do
-            Wait(1000)
-            orderTimer = orderTimer - 1
-        end
-        if orderIncoming then
-            orderIncoming = false
-            QBCore.Functions.Notify("Время на принятие заказа истекло", "primary")
-            DeclineOrder()
-        end
-    end)
-end
-
-local function DrawRectWithShadow(x, y, w, h, r, g, b, a, shadowOffset)
-    DrawRect(x + shadowOffset, y + shadowOffset, w, h, 0, 0, 0, a * 0.6)
-    DrawRect(x, y, w, h, r, g, b, a)
-end
-
-function DrawTaxiOrder()
-    if not orderIncoming or not orderData then return end
-
-    local function TruncateUtf8(str, max)
-        local i, len = 1, 0
-        while i <= #str do
-            len = len + 1
-            local c = str:byte(i)
-            if c > 0 and c <= 127 then i = i + 1
-            elseif c >= 192 and c < 224 then i = i + 2
-            elseif c >= 224 and c < 240 then i = i + 3
-            elseif c >= 240 and c < 248 then i = i + 4
-            else i = i + 1 end
-            if len == max then return str:sub(1, i-1) .. "..." end
-        end
-        return str
-    end
-
-    local streetNameHash = GetStreetNameAtCoord(orderData.pos.x, orderData.pos.y, orderData.pos.z)
-    local zoneName = GetLabelText(GetNameOfZone(orderData.pos.x, orderData.pos.y, orderData.pos.z))
-    local street = GetStreetNameFromHashKey(streetNameHash)
-    local timerStr = ("Осталось: %d сек."):format(orderTimer)
-    zoneName = TruncateUtf8(zoneName, 20)
-    street = TruncateUtf8(street, 20)
-
-    -- Чёрный фон и золотая рамка
-    local boxX, boxY = 0.87, 0.175  -- чуть ниже, чтобы кнопки попали внутрь
-    local boxW, boxH = 0.32, 0.25   -- выше, чтобы вместить кнопки
-    local alpha = 210               -- прозрачность фона
-    local borderAlpha = 140
-    local padX = 0.018
-    local padY = 0.022
-    local lineH = 0.035
-
-    -- Фон: ЧЁРНЫЙ!
-    DrawRect(boxX, boxY, boxW, boxH, 0, 0, 0, alpha)
-    DrawRect(boxX, boxY, boxW + 0.005, boxH + 0.005, 255, 215, 60, borderAlpha)
-
-    -- Координаты начала текста
-    local leftX = boxX - boxW/2 + padX
-    local curY = boxY - boxH/2 + padY
-
-    -- Заголовок
-    SetTextFont(4)
-    SetTextScale(0.73, 0.73)
-    SetTextColour(255, 220, 80, 255)
-    SetTextOutline()
-    BeginTextCommandDisplayText("STRING")
-    AddTextComponentSubstringPlayerName("Новый заказ такси!")
-    EndTextCommandDisplayText(leftX, curY)
-    curY = curY + lineH + 0.005
-
-    -- Район
-    SetTextFont(4)
-    SetTextScale(0.55, 0.55)
-    SetTextColour(255, 180, 60, 255)
-    SetTextOutline()
-    BeginTextCommandDisplayText("STRING")
-    AddTextComponentSubstringPlayerName("Район: ~w~" .. zoneName)
-    EndTextCommandDisplayText(leftX, curY)
-    curY = curY + lineH * 0.90
-
-    -- Улица
-    SetTextFont(4)
-    SetTextScale(0.55, 0.55)
-    SetTextColour(255, 255, 255, 255)
-    SetTextOutline()
-    BeginTextCommandDisplayText("STRING")
-    AddTextComponentSubstringPlayerName("Улица: ~w~" .. street)
-    EndTextCommandDisplayText(leftX, curY)
-    curY = curY + lineH * 0.90
-
-    -- Таймер (жёлтый)
-    SetTextFont(4)
-    SetTextScale(0.55, 0.55)
-    SetTextColour(255, 200, 40, 255)
-    SetTextOutline()
-    BeginTextCommandDisplayText("STRING")
-    AddTextComponentSubstringPlayerName(timerStr)
-    EndTextCommandDisplayText(leftX, curY)
-    curY = curY + lineH * 0.95
-
-    -- Линия перед кнопками
-    DrawRect(boxX, curY, boxW * 0.92, 0.0016, 255, 220, 80, 100)
-    curY = curY + 0.013
-
-    -- Кнопки: по краям, внутри чёрного фона
-    local btnY = curY + 0.009
-    SetTextFont(4)
-    SetTextScale(0.56, 0.56)
-    SetTextColour(80, 220, 100, 255)
-    SetTextOutline()
-    BeginTextCommandDisplayText("STRING")
-    AddTextComponentSubstringPlayerName("[E] Принять")
-    EndTextCommandDisplayText(leftX, btnY)
-    SetTextFont(4)
-    SetTextScale(0.56, 0.56)
-    SetTextColour(220, 90, 90, 255)
-    SetTextOutline()
-    BeginTextCommandDisplayText("STRING")
-    AddTextComponentSubstringPlayerName("[Y] Отклонить")
-    EndTextCommandDisplayText(boxX + boxW/2 - padX - 0.13, btnY)
-end
-
-CreateThread(function()
-    while true do
-        if orderIncoming then
-            DrawTaxiOrder()
-            if IsControlJustReleased(0, orderAcceptKey) then
-                orderIncoming = false
-                AcceptOrder()
-            elseif IsControlJustReleased(0, orderDeclineKey) then
-                orderIncoming = false
-                DeclineOrder()
-            end
-            Wait(0)
-        else
-            Wait(200)
-        end
-    end
-end)
-
--- Команда: включить npc-миссии
-RegisterCommand("taximissions", function()
-    if not taxiMissionsEnabled then
-        taxiMissionsEnabled = true
-        QBCore.Functions.Notify("NPC заказы такси включены", "success")
-        TrySendNewOrder()
-    else
-        QBCore.Functions.Notify("NPC заказы уже включены", "error")
-    end
-end, false)
-
--- Команда: выключить npc-миссии
-RegisterCommand("taximissions_off", function()
-    if taxiMissionsEnabled then
-        taxiMissionsEnabled = false
-
-        -- Удаляем все блипы, сбрасываем все переменные и отменяем все заказы
-        if orderBlip then RemoveBlip(orderBlip) orderBlip = nil end
-        waitingForAccept = false
-        orderIncoming = false
-        orderData = nil
-        orderTimer = 0
-        currentOrder = nil
-        if orderThread then TerminateThread(orderThread) orderThread = nil end
-
-        -- Завершаем активную NPC-миссию (NPC выходит, метки пропадают, метер сбрасывается)
-        if NpcData then
-            if NpcData.NpcBlip then RemoveBlip(NpcData.NpcBlip) NpcData.NpcBlip = nil end
-            if NpcData.DeliveryBlip then RemoveBlip(NpcData.DeliveryBlip) NpcData.DeliveryBlip = nil end
-            if NpcData.Npc and DoesEntityExist(NpcData.Npc) then
-                SetEntityAsMissionEntity(NpcData.Npc, false, true)
-                DeleteEntity(NpcData.Npc)
-                NpcData.Npc = nil
-            end
-            NpcData.Active = false
-            NpcData.NpcTaken = false
-            NpcData.NpcDelivered = false
-            NpcData.CurrentNpc = nil
-            NpcData.LastNpc = nil
-            NpcData.CurrentDeliver = nil
-            NpcData.LastDeliver = nil
-            NpcData.CrashCount = 0
-            NpcData.CountDown = 180
-        end
-        meterIsOpen = false
-        meterActive = false
-        resetMeter()
-        QBCore.Functions.Notify("NPC заказы такси выключены", "primary")
-    else
-        QBCore.Functions.Notify("NPC заказы уже выключены", "error")
-    end
-end, false)
-
-function TrySendNewOrder()
-    if not taxiMissionsEnabled or waitingForAccept or (NpcData and NpcData.Active) or orderIncoming then return end
-
-    local locations = Config.NPCLocations.TakeLocations
-    local idx = math.random(1, #locations)
-    local pos = locations[idx]
-
-    currentOrder = { idx = idx, pos = pos }
-    waitingForAccept = true
-
-    -- Показываем экран заказа
-    ShowTaxiOrderScreen(currentOrder)
-end
-
-function RemoveOrderPreview()
-    if orderBlip ~= nil then
-        RemoveBlip(orderBlip)
-        orderBlip = nil
-    end
-    waitingForAccept = false
-    -- Не сбрасываем currentOrder тут!
-end
-
-function AcceptOrder()
-    -- Проверяем, существует ли заказ и корректный индекс
-    if not waitingForAccept or not currentOrder or not currentOrder.idx then
-        QBCore.Functions.Notify("Ошибка: заказ не найден или истек!", "error")
-        RemoveOrderPreview()
-        currentOrder = nil
-        return
-    end
-
-    waitingForAccept = false
-    RemoveOrderPreview()
-    -- Запускаем кастомную миссию для принятого заказа
-    TriggerEvent("qb-taxi:client:DoTaxiNpc_custom", currentOrder.idx)
-    currentOrder = nil
-end
-
-function DeclineOrder()
-    if not waitingForAccept then return end
-
-    RemoveOrderPreview()
-    waitingForAccept = false
-    if orderThread then TerminateThread(orderThread) orderThread = nil end
-    currentOrder = nil
-    -- Таймаут перед новым заказом
-    if taxiMissionsEnabled then
-        local timeout = math.random(ORDER_RETRY_MIN, ORDER_RETRY_MAX)
-        QBCore.Functions.Notify("Вы отказались от заказа. Ожидание нового: "..timeout.." секунд", "primary")
-        CreateThread(function()
-            Wait(timeout * 1000)
-            TrySendNewOrder()
-        end)
-    end
-end
-
--- Переопределяем DoTaxiNpc чтобы использовать custom индекс
-RegisterNetEvent("qb-taxi:client:DoTaxiNpc_custom", function(npcIdx)
-    if not PlayerJob.onduty then return end
-    if whitelistedVehicle() then
-        if not NpcData.Active then
-            if npcIdx and Config.NPCLocations.TakeLocations[npcIdx] then
-                NpcData.CurrentNpc = npcIdx
-            else
-                NpcData.CurrentNpc = math.random(1, #Config.NPCLocations.TakeLocations)
-            end
-
-            local Gender = math.random(1, #Config.NpcSkins)
-            local PedSkin = math.random(1, #Config.NpcSkins[Gender])
-            local model = GetHashKey(Config.NpcSkins[Gender][PedSkin])
-            RequestModel(model)
-            while not HasModelLoaded(model) do Wait(0) end
-
-            local x = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x
-            local y = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y
-            local z = Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z
-            local spawnZ = z - 0.1
-
-            NpcData.Npc = CreatePed(3, model, x, y, spawnZ, 0.0, true, false)
-            PlaceObjectOnGroundProperly(NpcData.Npc)
-            FreezeEntityPosition(NpcData.Npc, true)
-
-            if NpcData.NpcBlip ~= nil then
-                RemoveBlip(NpcData.NpcBlip)
-            end
-            QBCore.Functions.Notify(Lang and Lang.t and Lang:t('info.npc_on_gps') or "NPC заказ отмечен на GPS", 'success')
-
-            NpcData.NpcBlip = AddBlipForCoord(x, y, z)
-            SetBlipColour(NpcData.NpcBlip, 3)
-            SetBlipRoute(NpcData.NpcBlip, true)
-            SetBlipRouteColour(NpcData.NpcBlip, 3)
-            NpcData.LastNpc = NpcData.CurrentNpc
-            NpcData.Active = true
-
-            CreateThread(function()
-                while not NpcData.NpcTaken and NpcData.Active do
-                    local ped = PlayerPedId()
-                    local pos = GetEntityCoords(ped)
-                    local dist = #(pos - vector3(x, y, z))
-
-                    if dist < 25 then
-                        DrawMarker(0, x, y, z - 1.0, 0, 0, 0, 0, 0, 0, 2.0, 2.0, 1.0, 255, 255, 0, 90, false, true, 2, false)
-                        if dist < 5 then
-                            DrawText3D(x, y, z + 1.0, "~y~[E] Посадить клиента")
-                            if IsControlJustPressed(0, 38) then
-                                local veh = GetVehiclePedIsIn(ped, 0)
-                                local maxSeats, freeSeat = GetVehicleMaxNumberOfPassengers(veh)
-                                for i = maxSeats - 1, 0, -1 do
-                                    if IsVehicleSeatFree(veh, i) then
-                                        freeSeat = i
-                                        break
-                                    end
-                                end
-
-                                meterIsOpen = true
-                                meterActive = true
-                                lastLocation = GetEntityCoords(PlayerPedId())
-                                SendNUIMessage({
-                                    action = 'openMeter',
-                                    toggle = true,
-                                    meterData = Config.Meter
-                                })
-                                SendNUIMessage({ action = 'toggleMeter' })
-                                ClearPedTasksImmediately(NpcData.Npc)
-                                FreezeEntityPosition(NpcData.Npc, false)
-                                TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
-                                listenForVehicleDamage()
-                                resetMeter()
-                                QBCore.Functions.Notify(Lang and Lang.t and Lang:t('info.go_to_location') or "Отвезите клиента по адресу")
-                                if NpcData.NpcBlip ~= nil then
-                                    RemoveBlip(NpcData.NpcBlip)
-                                end
-                                GetDeliveryLocation()
-                                NpcData.NpcTaken = true
-                            end
-                        end
-                    end
-                    Wait(1)
-                end
-            end)
-        else
-            QBCore.Functions.Notify(Lang and Lang.t and Lang:t('error.already_mission') or "У вас уже есть текущий заказ")
-        end
-    else
-        QBCore.Functions.Notify(Lang and Lang.t and Lang:t('error.not_in_taxi') or "Вы должны быть в такси")
-    end
-end)
-
--- Переопределяем ResetNpcTask чтобы сразу выдавать новый заказ если активна система
-local _orig_ResetNpcTask = ResetNpcTask
-ResetNpcTask = function()
-    _orig_ResetNpcTask()
-    if taxiMissionsEnabled then
-        local timeout = math.random(ORDER_RETRY_MIN, ORDER_RETRY_MAX)
-        CreateThread(function()
-            Wait(timeout * 1000)
-            TrySendNewOrder()
-        end)
-    end
-end
-
--- === КОНЕЦ: НОВЫЕ ФУНКЦИИ ДЛЯ NPC МИССИЙ ===
