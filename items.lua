@@ -1,7 +1,7 @@
 return {
 	['testburger'] = {
-		label = 'Test Burger',
-		weight = 220,
+		label = 'Тестовый бургер',
+		weight = 220, -- гамбургер ~220 г
 		degrade = 60,
 		client = {
 			image = 'burger_chicken.png',
@@ -17,45 +17,579 @@ return {
 		},
 		buttons = {
 			{
-				label = 'Lick it',
+				label = 'Лизнуть',
 				action = function(slot)
-					print('You licked the burger')
+					print('Вы лизнули бургер')
 				end
 			},
 			{
-				label = 'Squeeze it',
+				label = 'Сжать',
 				action = function(slot)
-					print('You squeezed the burger :(')
+					print('Вы сжали бургер :(')
 				end
 			},
 			{
-				label = 'What do you call a vegan burger?',
-				group = 'Hamburger Puns',
+				label = 'Как называется веганский бургер?',
+				group = 'Шутки про гамбургеры',
 				action = function(slot)
-					print('A misteak.')
+					print('Ошибка.')
 				end
 			},
 			{
-				label = 'What do frogs like to eat with their hamburgers?',
-				group = 'Hamburger Puns',
+				label = 'Что лягушки любят есть с гамбургерами?',
+				group = 'Шутки про гамбургеры',
 				action = function(slot)
-					print('French flies.')
+					print('Французские мухи.')
 				end
 			},
 			{
-				label = 'Why were the burger and fries running?',
-				group = 'Hamburger Puns',
+				label = 'Почему бургер и картошка убегали?',
+				group = 'Шутки про гамбургеры',
 				action = function(slot)
-					print('Because they\'re fast food.')
+					print('Потому что это фастфуд.')
 				end
 			}
 		},
 		consume = 0.3
 	},
+	
+	['mechanic_tools'] = {
+    label = "Mechanic tools",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "Needed for vehicle repairs",
+    unique = true,
+    client = { image = "mechanic_tools.png" },
+},
+
+['toolbox'] = {
+    label = "Toolbox",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "Needed for Performance part removal",
+    unique = true,
+    client = { image = "toolbox.png" },
+},
+
+['ducttape'] = {
+    label = "Duct Tape",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "Good for quick fixes",
+    unique = true,
+    client = { image = "bodyrepair.png" },
+},
+
+['mechboard'] = {
+    label = "Mechanic Sheet",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "mechboard.png" },
+},
+
+-- Performance
+['turbo'] = {
+    label = "Supercharger Turbo",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "Who doesn't need a 65mm Turbo??",
+    unique = true,
+    client = { image = "turbo.png" },
+},
+
+['car_armor'] = {
+    label = "Vehicle Armor",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "armour.png" },
+},
+
+['nos'] = {
+    label = "NOS Bottle",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "A full bottle of NOS",
+    unique = true,
+    client = { image = "nos.png" },
+},
+
+['noscan'] = {
+    label = "Empty NOS Bottle",
+    weight = 0,
+    stack = true,
+    close = true,
+    description = "An Empty bottle of NOS",
+    unique = false,
+    client = { image = "noscan.png" },
+},
+
+['noscolour'] = {
+    label = "NOS Colour Injector",
+    weight = 0,
+    stack = true,
+    close = true,
+    description = "Make that purge spray",
+    unique = false,
+    client = { image = "noscolour.png" },
+},
+
+['engine1'] = {
+    label = "Tier 1 Engine",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "engine1.png" },
+},
+
+['engine2'] = {
+    label = "Tier 2 Engine",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "engine2.png" },
+},
+
+['engine3'] = {
+    label = "Tier 3 Engine",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "engine3.png" },
+},
+
+['engine4'] = {
+    label = "Tier 4 Engine",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "engine4.png" },
+},
+
+['engine5'] = {
+    label = "Tier 5 Engine",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "engine5.png" },
+},
+
+['transmission1'] = {
+    label = "Tier 1 Transmission",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "transmission1.png" },
+},
+
+['transmission2'] = {
+    label = "Tier 2 Transmission",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "transmission2.png" },
+},
+
+['transmission3'] = {
+    label = "Tier 3 Transmission",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "transmission3.png" },
+},
+
+['transmission4'] = {
+    label = "Tier 4 Transmission",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "transmission4.png" },
+},
+
+['brakes1'] = {
+    label = "Tier 1 Brakes",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "brakes1.png" },
+},
+
+['brakes2'] = {
+    label = "Tier 2 Brakes",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "brakes2.png" },
+},
+
+['brakes3'] = {
+    label = "Tier 3 Brakes",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "brakes3.png" },
+},
+
+['suspension1'] = {
+    label = "Tier 1 Suspension",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "suspension1.png" },
+},
+
+['suspension2'] = {
+    label = "Tier 2 Suspension",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "suspension2.png" },
+},
+
+['suspension3'] = {
+    label = "Tier 3 Suspension",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "suspension3.png" },
+},
+
+['suspension4'] = {
+    label = "Tier 4 Suspension",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "suspension4.png" },
+},
+
+['suspension5'] = {
+    label = "Tier 5 Suspension",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "suspension5.png" },
+},
+
+['bprooftires'] = {
+    label = "Bulletproof Tires",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "bprooftires.png" },
+},
+
+['drifttires'] = {
+    label = "Drift Tires",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "drifttires.png" },
+},
+
+-- Cosmetics
+['underglow_controller'] = {
+    label = "Neon Controller",
+    weight = 0,
+    stack = true,
+    close = true,
+    description = "RGB LED Vehicle Remote",
+    unique = false,
+    client = { image = "underglow_controller.png" },
+},
+
+['headlights'] = {
+    label = "Xenon Headlights",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "8k HID headlights",
+    unique = true,
+    client = { image = "headlights.png" },
+},
+
+['tint_supplies'] = {
+    label = "Tint Supplies",
+    weight = 0,
+    stack = true,
+    close = true,
+    description = "Supplies for window tinting",
+    unique = false,
+    client = { image = "tint_supplies.png" },
+},
+
+['customplate'] = {
+    label = "Customized Plates",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "plate.png" },
+},
+
+['hood'] = {
+    label = "Vehicle Hood",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "hood.png" },
+},
+
+['roof'] = {
+    label = "Vehicle Roof",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "roof.png" },
+},
+
+['spoiler'] = {
+    label = "Vehicle Spoiler",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "spoiler.png" },
+},
+
+['bumper'] = {
+    label = "Vehicle Bumper",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "bumper.png" },
+},
+
+['skirts'] = {
+    label = "Vehicle Skirts",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "skirts.png" },
+},
+
+['exhaust'] = {
+    label = "Vehicle Exhaust",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "exhaust.png" },
+},
+
+['seat'] = {
+    label = "Seat Cosmetics",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "seat.png" },
+},
+
+['rollcage'] = {
+    label = "Roll Cage",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "rollcage.png" },
+},
+
+['rims'] = {
+    label = "Custom Wheel Rims",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "rims.png" },
+},
+
+['livery'] = {
+    label = "Livery Roll",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "livery.png" },
+},
+
+['paintcan'] = {
+    label = "Vehicle Spray Can",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "spraycan.png" },
+},
+
+['tires'] = {
+    label = "Drift Smoke Tires",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "tires.png" },
+},
+
+['horn'] = {
+    label = "Custom Vehicle Horn",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "horn.png" },
+},
+
+['internals'] = {
+    label = "Internal Cosmetics",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "internals.png" },
+},
+
+['externals'] = {
+    label = "Exterior Cosmetics",
+    weight = 0,
+    stack = false,
+    close = true,
+    description = "",
+    unique = true,
+    client = { image = "mirror.png" },
+},
+
+-- Repair Parts
+['newoil'] = {
+    label = "Car Oil",
+    weight = 0,
+    stack = true,
+    close = false,
+    description = "",
+    unique = false,
+    client = { image = "caroil.png" },
+},
+
+['sparkplugs'] = {
+    label = "Spark Plugs",
+    weight = 0,
+    stack = true,
+    close = false,
+    description = "",
+    unique = false,
+    client = { image = "sparkplugs.png" },
+},
+
+['carbattery'] = {
+    label = "Car Battery",
+    weight = 0,
+    stack = true,
+    close = false,
+    description = "",
+    unique = false,
+    client = { image = "carbattery.png" },
+},
+
+['axleparts'] = {
+    label = "Axle Parts",
+    weight = 0,
+    stack = true,
+    close = false,
+    description = "",
+    unique = false,
+    client = { image = "axleparts.png" },
+},
+
+['sparetire'] = {
+    label = "Spare Tire",
+    weight = 0,
+    stack = false,
+    close = false,
+    description = "",
+    unique = true,
+    client = { image = "sparetire.png" },
+},
+
+["acid"] = {
+	label = "Synthetic Acid",
+	weight = 1,
+	stack = true,
+	close = true,
+	description = "Material - Synthetic Acid",
+	client = {
+		image = "acid.png",
+	}
+},
 
 	['bandage'] = {
-		label = 'Bandage',
-		weight = 115,
+		label = 'Бинт',
+		weight = 30, -- бинт весит около 30 г
 		client = {
 			anim = { dict = 'missheistdockssetup1clipboard@idle_a', clip = 'idle_a', flag = 49 },
 			prop = { model = `prop_rolled_sock_02`, pos = vec3(-0.14, -0.14, -0.08), rot = vec3(-50.0, -50.0, 0.0) },
@@ -65,182 +599,197 @@ return {
 	},
 
 	['black_money'] = {
-		label = 'Dirty Money',
+		label = 'Грязные деньги',
 	},
 	
 	['bubble'] = {
-    label = 'Газировка Bubble',
-    weight = 300,
-    client = {
-        status = { thirst = 35000 },
-        anim = 'drinking',
-        prop = 'bubble',
-        usetime = 2500,
-        notification = 'Вы выпили газировку Bubble'
-    },
-},
-['champagne'] = {
-    label = 'Шампанское',
-    weight = 800,
-    client = {
-        status = { thirst = 25000 },
-        anim = 'drinking',
-        prop = 'champagne',
-        usetime = 3000,
-        notification = 'Вы выпили шампанское',
-        effect = { type = 'drunk', time = 60 } -- Эффект опьянения на 60 секунд
-    },
-},
-['chips'] = {
-    label = 'Чипсы',
-    weight = 120,
-    client = {
-        status = { hunger = 18000 },
-        anim = 'eating',
-        prop = 'chips',
-        usetime = 1800,
-        notification = 'Вы съели чипсы'
-    },
-},
-['chocolat'] = {
-    label = 'Шоколад',
-    weight = 90,
-    client = {
-        status = { hunger = 12000 },
-        anim = 'eating',
-        prop = 'chocolat',
-        usetime = 1600,
-        notification = 'Вы съели шоколад'
-    },
-},
-['COCKTAIL_cappucino'] = {
-    label = 'Капучино',
-    weight = 250,
-    client = {
-        status = { thirst = 20000 },
-        anim = 'drinking',
-        prop = 'COCKTAIL_cappucino',
-        usetime = 2000,
-        notification = 'Вы выпили капучино'
-    },
-},
-['COCKTAIL_greenTea'] = {
-    label = 'Зелёный чай',
-    weight = 250,
-    client = {
-        status = { thirst = 18000 },
-        anim = 'drinking',
-        prop = 'COCKTAIL_greenTea',
-        usetime = 2000,
-        notification = 'Вы выпили зелёный чай'
-    },
-},
-['COCKTAIL_TEA'] = {
-    label = 'Чёрный чай',
-    weight = 250,
-    client = {
-        status = { thirst = 17000 },
-        anim = 'drinking',
-        prop = 'COCKTAIL_TEA',
-        usetime = 2000,
-        notification = 'Вы выпили чай'
-    },
-},
-['cola'] = {
-    label = 'Кола',
-    weight = 350,
-    client = {
-        status = { thirst = 30000 },
-        anim = 'drinking',
-        prop = 'cola',
-        usetime = 2000,
-        notification = 'Вы выпили колу'
-    },
-},
-['GlassJuice_mandarin2'] = {
-    label = 'Мандариновый сок',
-    weight = 320,
-    client = {
-        status = { thirst = 25000 },
-        anim = 'drinking',
-        prop = 'GlassJuice_mandarin2',
-        usetime = 2000,
-        notification = 'Вы выпили мандариновый сок'
-    },
-},
-['sprunk'] = {
-    label = 'Спранк',
-    weight = 350,
-    client = {
-        status = { thirst = 30000 },
-        anim = 'drinking',
-        prop = 'sprunk',
-        usetime = 2000,
-        notification = 'Вы выпили спранк'
-    },
-},
-['water_bottle'] = {
-    label = 'Бутылка воды',
-    weight = 500,
-    client = {
-        status = { thirst = 40000 },
-        anim = 'drinking',
-        prop = 'water_bottle',
-        usetime = 2000,
-        notification = 'Вы выпили воду'
-    },
-},
-['whiskey'] = {
-    label = 'Виски',
-    weight = 700,
-    client = {
-        status = { thirst = 12000 },
-        anim = 'drinking',
-        prop = 'whiskey',
-        usetime = 3000,
-        notification = 'Вы выпили виски',
-        effect = { type = 'drunk', time = 120 } -- Эффект опьянения на 120 секунд
-    },
-},
-['yogurt'] = {
-    label = 'Йогурт',
-    weight = 130,
-    client = {
-        status = { hunger = 9000, thirst = 5000 },
-        anim = 'eating',
-        prop = 'yogurt',
-        usetime = 1500,
-        notification = 'Вы съели йогурт'
-    },
-},
+    	label = 'Газировка Bubble',
+    	weight = 330, -- стандартная банка газировки 330 мл
+		consume = 1,
+    	client = {
+        	status = { thirst = 35000 },
+        	anim = 'drinking',
+        	prop = 'bubble',
+        	usetime = 2500,
+        	notification = 'Вы выпили газировку Bubble'
+    	},
+	},
+	['champagne'] = {
+    	label = 'Шампанское',
+    	weight = 750, -- бутылка шампанского 0.75л ~750 г
+		consume = 1,
+    	client = {
+        	status = { thirst = 25000 },
+        	anim = 'drinking',
+        	prop = 'champagne',
+        	usetime = 3000,
+        	notification = 'Вы выпили шампанское',
+        	effect = { type = 'drunk', time = 60 }
+    	},
+	},
+	['chips'] = {
+    	label = 'Чипсы',
+    	weight = 90, -- пачка чипсов ~90 г
+		consume = 1,
+    	client = {
+        	status = { hunger = 18000 },
+        	anim = 'eating',
+        	prop = 'chips',
+        	usetime = 1800,
+        	notification = 'Вы съели чипсы'
+    	},
+	},
+	['chocolat'] = {
+    	label = 'Шоколад',
+    	weight = 100, -- стандартная плитка шоколада ~100 г
+		consume = 1,
+    	client = {
+        	status = { hunger = 12000 },
+        	anim = 'eating',
+        	prop = 'chocolat',
+        	usetime = 1600,
+        	notification = 'Вы съели шоколад'
+    	},
+	},
+	['COCKTAIL_cappucino'] = {
+    	label = 'Капучино',
+    	weight = 220, -- средний стакан ~220 г
+		consume = 1,
+    	client = {
+        	status = { thirst = 20000 },
+        	anim = 'drinking',
+        	prop = 'COCKTAIL_cappucino',
+        	usetime = 2000,
+        	notification = 'Вы выпили капучино'
+    	},
+	},
+	['COCKTAIL_greenTea'] = {
+    	label = 'Зелёный чай',
+    	weight = 200, -- чашка чая ~200 г
+		consume = 1,
+    	client = {
+        	status = { thirst = 18000 },
+        	anim = 'drinking',
+        	prop = 'COCKTAIL_greenTea',
+        	usetime = 2000,
+        	notification = 'Вы выпили зелёный чай'
+    	},
+	},
+	['COCKTAIL_TEA'] = {
+    	label = 'Чёрный чай',
+    	weight = 200,
+		consume = 1,
+    	client = {
+        	status = { thirst = 17000 },
+        	anim = 'drinking',
+        	prop = 'COCKTAIL_TEA',
+        	usetime = 2000,
+        	notification = 'Вы выпили чай'
+    	},
+	},
+	['cola'] = {
+    	label = 'Кола',
+    	weight = 500,
+		consume = 1,
+    	client = {
+        	status = { thirst = 30000 },
+        	anim = 'drinking',
+        	prop = 'cola',
+        	usetime = 2000,
+        	notification = 'Вы выпили колу'
+    	},
+	},
+	['GlassJuice_mandarin2'] = {
+    	label = 'Мандариновый сок',
+    	weight = 250, -- стакан ~250 г
+		consume = 1,
+    	client = {
+        	status = { thirst = 25000 },
+        	anim = 'drinking',
+        	prop = 'GlassJuice_mandarin2',
+        	usetime = 2000,
+        	notification = 'Вы выпили мандариновый сок'
+    	},
+	},
+	['sprunk'] = {
+    	label = 'Спранк',
+    	weight = 330,
+		consume = 1,
+    	client = {
+        	status = { thirst = 30000 },
+        	anim = 'drinking',
+        	prop = 'sprunk',
+        	usetime = 2000,
+        	notification = 'Вы выпили спранк'
+    	},
+	},
+	['water_bottle'] = {
+    	label = 'Бутылка воды',
+    	weight = 500, -- 0.5л воды
+		consume = 1,
+    	client = {
+        	status = { thirst = 40000 },
+        	anim = 'drinking',
+        	prop = 'water_bottle',
+        	usetime = 2000,
+        	notification = 'Вы выпили воду'
+    	},
+	},
+	['whiskey'] = {
+    	label = 'Виски',
+    	weight = 700, -- бутылка виски 0.7л
+		consume = 1,
+    	client = {
+        	status = { thirst = 12000 },
+        	anim = 'drinking',
+        	prop = 'whiskey',
+        	usetime = 3000,
+        	notification = 'Вы выпили виски',
+        	effect = { type = 'drunk', time = 120 }
+    	},
+	},
+	['yogurt'] = {
+    	label = 'Йогурт',
+    	weight = 125, -- стандартный стаканчик йогурта
+		consume = 1,
+    	client = {
+        	status = { hunger = 9000, thirst = 5000 },
+        	anim = 'eating',
+        	prop = 'yogurt',
+        	usetime = 1500,
+        	notification = 'Вы съели йогурт'
+    	},
+	},
 
 	['burger'] = {
-		label = 'Burger',
+		label = 'Бургер',
 		weight = 220,
+		consume = 1,
 		client = {
 			status = { hunger = 200000 },
 			anim = 'eating',
 			prop = 'burger',
 			usetime = 2500,
-			notification = 'You ate a delicious burger'
+			notification = 'Вы съели вкусный бургер'
 		},
 	},
 
 	['sprunk'] = {
-		label = 'Sprunk',
-		weight = 350,
+		label = 'Спранк',
+		weight = 330,
+		consume = 1,
 		client = {
 			status = { thirst = 200000 },
 			anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
 			prop = { model = `prop_ld_can_01`, pos = vec3(0.01, 0.01, 0.06), rot = vec3(5.0, 5.0, -180.5) },
 			usetime = 2500,
-			notification = 'You quenched your thirst with a sprunk'
+			notification = 'Вы утолили жажду спранком'
 		}
 	},
 
 	['parachute'] = {
-		label = 'Parachute',
-		weight = 8000,
+		label = 'Парашют',
+		weight = 6500, -- спортивный парашют ~6.5 кг
 		stack = false,
 		client = {
 			anim = { dict = 'clothingshirt', clip = 'try_shirt_positive_d' },
@@ -249,38 +798,41 @@ return {
 	},
 
 	['garbage'] = {
-		label = 'Garbage',
+		label = 'Мусор',
 	},
 	
-		['contact_pimp'] = {
+	['contact_pimp'] = {
 		label = 'Контакт для сутенера',
 	},
-			['paint'] = {
+	['privat_dostup'] = {
+		label = 'Доступ к привату',
+	},
+	['paint'] = {
 		label = 'Баллончик с краской',
 	},
-			['stencil'] = {
+	['stencil'] = {
 		label = 'Трафарет',
 	},
 
 	['paperbag'] = {
-		label = 'Paper Bag',
-		weight = 1,
+		label = 'Бумажный пакет',
+		weight = 5, -- бумажный пакет ~5 г
 		stack = false,
 		close = false,
 		consume = 0
 	},
 
 	['identification'] = {
-		label = 'Identification',
+		label = 'Удостоверение личности',
 		client = {
 			image = 'card_id.png'
 		}
 	},
 
 	['panties'] = {
-		label = 'Knickers',
-		weight = 10,
-		consume = 0,
+		label = 'Трусики',
+		weight = 20, -- около 20 г
+		consume = 1,
 		client = {
 			status = { thirst = -100000, stress = -25000 },
 			anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
@@ -290,13 +842,13 @@ return {
 	},
 
 	['lockpick'] = {
-		label = 'Lockpick',
-		weight = 160,
+		label = 'Отмычка',
+		weight = 40, -- отмычка ~40 г
 	},
 
 	['phone'] = {
-		label = 'Phone',
-		weight = 190,
+		label = 'Телефон',
+		weight = 180, -- телефон ~180 г
 		stack = false,
 		consume = 0,
 		client = {
@@ -319,44 +871,68 @@ return {
 	},
 
 	['money'] = {
-		label = 'Money',
+		label = 'Деньги',
 	},
 
 	['mustard'] = {
-		label = 'Mustard',
-		weight = 500,
+		label = 'Горчица',
+		weight = 250, -- тюбик горчицы ~250г
+		consume = 1,
 		client = {
 			status = { hunger = 25000, thirst = 25000 },
 			anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
 			prop = { model = `prop_food_mustard`, pos = vec3(0.01, 0.0, -0.07), rot = vec3(1.0, 1.0, -1.5) },
 			usetime = 2500,
-			notification = 'You.. drank mustard'
+			notification = 'Вы... выпили горчицу'
 		}
 	},
 
 	['water'] = {
-		label = 'Water',
+		label = 'Вода',
 		weight = 500,
+		consume = 1,
 		client = {
-			status = { thirst = 200000 },
+			status = { thirst = 500000 },
 			anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
 			prop = { model = `prop_ld_flow_bottle`, pos = vec3(0.03, 0.03, 0.02), rot = vec3(0.0, 0.0, -1.5) },
 			usetime = 2500,
 			cancel = true,
-			notification = 'You drank some refreshing water'
+			notification = 'Вы выпили освежающую воду'
 		}
 	},
 
-	['radio'] = {
-		label = 'Radio',
-		weight = 1000,
-		stack = false,
-		allowArmed = true
-	},
+['radio'] = {
+	label = 'Radio',
+	weight = 1000,
+	allowArmed = true,
+	consume = 0,
+	client = {
+		event = 'mm_radio:client:use'
+	}
+},
+
+['jammer'] = {
+	label = 'Radio Jammer',
+	weight = 10000,
+	allowArmed = true,
+	client = {
+		event = 'mm_radio:client:usejammer'
+	}
+},
+
+['radiocell'] = {
+	label = 'AAA Cells',
+	weight = 1000,
+	stack = true,
+	allowArmed = true,
+	client = {
+		event = 'mm_radio:client:recharge'
+	}
+},
 
 	['armour'] = {
-		label = 'Bulletproof Vest',
-		weight = 3000,
+		label = 'Бронежилет',
+		weight = 8500, -- бронежилет ~8.5 кг
 		stack = false,
 		client = {
 			anim = { dict = 'clothingshirt', clip = 'try_shirt_positive_d' },
@@ -365,27 +941,27 @@ return {
 	},
 
 	['clothing'] = {
-		label = 'Clothing',
+		label = 'Одежда',
 		consume = 0,
 	},
 
 	['mastercard'] = {
-		label = 'Fleeca Card',
+		label = 'Карта Fleeca',
 		stack = false,
-		weight = 10,
+		weight = 5, -- пластиковая карта ~5 г
 		client = {
 			image = 'card_bank.png'
 		}
 	},
 
 	['scrapmetal'] = {
-		label = 'Scrap Metal',
+		label = 'Металлолом',
 		weight = 80,
 	},
 
 	["fitbit"] = {
-		label = "Fitbit",
-		weight = 500,
+		label = "Фитбит",
+		weight = 30, -- фитнес-браслет ~30 г
 		stack = false,
 		close = true,
 		description = "Мне нравится fitbit",
@@ -396,7 +972,7 @@ return {
 
 	["tactical_muzzle_brake"] = {
 		label = "Тактический тормозной раструб",
-		weight = 1000,
+		weight = 600, -- дульный тормоз ~600 г
 		stack = true,
 		close = true,
 		description = "Тактический тормозной раструб для оружия",
@@ -406,22 +982,22 @@ return {
 	},
 
 	["wet_classic_phone"] = {
-		label = "Wet Classic Phone",
-		weight = 700,
+		label = "Мокрый классический телефон",
+		weight = 180,
 		stack = false,
 		close = true,
-		description = "Did you really think that swimming in the ocean with your phone was a good idea?",
+		description = "Вы правда думали, что купаться в океане с телефоном — хорошая идея?",
 		client = {
 			image = "wet_classic_phone.png",
 		}
 	},
 
 	["wet_greenlight_phone"] = {
-		label = "Wet Green Light Phone",
-		weight = 700,
+		label = "Мокрый Green Light телефон",
+		weight = 180,
 		stack = false,
 		close = true,
-		description = "They say that Quasar Smartphone is the same as an iPhone, what do you think?",
+		description = "Говорят, Quasar Smartphone такой же, как iPhone, а вы как думаете?",
 		client = {
 			image = "wet_greenlight_phone.png",
 		}
@@ -429,7 +1005,7 @@ return {
 
 	["largescope_attachment"] = {
 		label = "Большой прицел",
-		weight = 1000,
+		weight = 900,
 		stack = true,
 		close = true,
 		description = "Большой прицел для оружия",
@@ -440,7 +1016,7 @@ return {
 
 	["bag"] = {
 		label = "Сумка",
-		weight = 0,
+		weight = 500, -- тканевая сумка ~0.5 кг
 		stack = false,
 		close = true,
 		description = "Сумка",
@@ -450,11 +1026,11 @@ return {
 	},
 
 	["wet_phone"] = {
-		label = "Wet Phone",
-		weight = 700,
+		label = "Мокрый телефон",
+		weight = 180,
 		stack = false,
 		close = true,
-		description = "Did you really think that swimming in the ocean with your phone was a good idea?",
+		description = "Вы правда думали, что купаться в океане с телефоном — хорошая идея?",
 		client = {
 			image = "wet_classic_phone.png",
 		}
@@ -462,7 +1038,7 @@ return {
 
 	["wine"] = {
 		label = "Вино",
-		weight = 300,
+		weight = 750, -- бутылка вина 0.75л
 		stack = true,
 		close = false,
 		description = "Хорошее вино для выпивания в приятный вечер",
@@ -472,11 +1048,11 @@ return {
 	},
 
 	["police_stormram"] = {
-		label = "Police Storm Ram",
-		weight = 800,
+		label = "Полицейский таран",
+		weight = 9000, -- ~9 кг
 		stack = true,
 		close = true,
-		description = "It does not contain a description.",
+		description = "Описание отсутствует.",
 		client = {
 			image = "police_stormram.png",
 		}
@@ -484,7 +1060,7 @@ return {
 
 	["suppressor_attachment"] = {
 		label = "Глушитель",
-		weight = 1000,
+		weight = 350, -- глушитель ~350 г
 		stack = true,
 		close = true,
 		description = "Глушитель для оружия",
@@ -494,593 +1070,591 @@ return {
 	},
 
 	["veh_xenons"] = {
-		label = "Ксеноны",
-		weight = 1000,
+		label = "Ксеноновые фары",
+		weight = 1200, -- комплект ксеноновых фар ~1.2 кг
 		stack = true,
 		close = true,
-		description = "Улучшить ксеноны транспортного средства",
+		description = "Улучшить ксеноновые фары транспортного средства",
 		client = {
 			image = "veh_xenons.png",
 		}
 	},
 
 	["steel"] = {
-		label = "Сталь",
-		weight = 100,
-		stack = true,
-		close = false,
-		description = "Хороший кусочек металла, который, возможно, можно использовать для чего-то",
-		client = {
-			image = "steel.png",
-		}
-	},
-
-	["goldbar"] = {
-		label = "Золотая слиток",
-		weight = 7000,
-		stack = true,
-		close = true,
-		description = "Кажется, довольно дорого",
-		client = {
-			image = "goldbar.png",
-		}
-	},
-
-	["weed_amnesia_seed"] = {
-		label = "Amnesia seed",
-		weight = 50,
-		stack = true,
-		close = true,
-		description = "It does not contain a description.",
-		client = {
-			image = "weed_amnesia_seed.png",
-		}
-	},
-
-	["ironoxide"] = {
-		label = "Железный порошок",
-		weight = 100,
-		stack = true,
-		close = false,
-		description = "Немного порошка для смешивания.",
-		client = {
-			image = "ironoxide.png",
-		}
-	},
-
-	["vodka"] = {
-		label = "Водка",
-		weight = 500,
-		stack = true,
-		close = true,
-		description = "Для всех испытывающих жажду",
-		client = {
-			image = "vodka.png",
-		}
-	},
-
-	["coke_brick"] = {
-		label = "Блок кокаина",
-		weight = 1000,
-		stack = false,
-		close = true,
-		description = "Тяжелая упаковка кокаина, в основном используется для сделок и занимает много места",
-		client = {
-			image = "coke_brick.png",
-		}
-	},
-
-	["kurkakola"] = {
-		label = "Кола",
-		weight = 500,
-		stack = true,
-		close = true,
-		description = "Для всех испытывающих жажду",
-		client = {
-			image = "cola.png",
-		}
-	},
-
-	["red_phone"] = {
-		label = "Red Phone",
-		weight = 700,
-		stack = false,
-		close = true,
-		description = "They say that Quasar Smartphone is the same as an iPhone, what do you think?",
-		client = {
-			image = "red_phone.png",
-		}
-	},
-
-	["weed_skunk_seed"] = {
-		label = "Skunk seed",
-		weight = 50,
-		stack = true,
-		close = true,
-		description = "It does not contain a description.",
-		client = {
-			image = "weed_skunk_seed.png",
-		}
-	},
-
-	["weaponlicense"] = {
-		label = "Лицензия на оружие",
-		weight = 0,
-		stack = false,
-		close = true,
-		description = "Лицензия на оружие",
-		client = {
-			image = "weapon_license.png",
-		},
-		server = {
-			export = 'um-idcard.weaponlicense'
-		}
-	},
-
-	["phone_hack"] = {
-		label = "Phone Hack",
-		weight = 300,
-		stack = false,
-		close = true,
-		description = "With this chip, you can access hidden areas of Discord.",
-		client = {
-			image = "phone_hack.png",
-		}
-	},
-
-	["crack_baggy"] = {
-		label = "Пакет крэка",
-		weight = 0,
-		stack = true,
-		close = true,
-		description = "Чтобы быстрее обрадоваться",
-		client = {
-			image = "crack_baggy.png",
-		}
-	},
-
-	["handcuffs"] = {
-		label = "Handcuffs",
-		weight = 100,
-		stack = true,
-		close = false,
-		description = "Handcuffs",
-		client = {
-			image = "handcuffs.png",
-		}
-	},
-
-	["filled_evidence_bag"] = {
-		label = "Сумка с уликами",
-		weight = 200,
-		stack = false,
-		close = false,
-		description = "Наполненная сумка с уликами, чтобы вычислить виновного >:(",
-		client = {
-			image = "evidence.png",
-		}
-	},
-
-	["black_phone"] = {
-		label = "Black Phone",
-		weight = 700,
-		stack = false,
-		close = true,
-		description = "They say that Quasar Smartphone is the same as an iPhone, what do you think?",
-		client = {
-			image = "black_phone.png",
-		}
-	},
-
-	["iphone"] = {
-		label = "iPhone",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Очень дорогой телефон",
-		client = {
-			image = "iphone.png",
-		}
-	},
-
-	["labkey"] = {
-		label = "Ключ",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Ключ от замка...?",
-		client = {
-			image = "labkey.png",
-		}
-	},
-
-	["aluminumoxide"] = {
-		label = "Алюминиевый порошок",
-		weight = 100,
-		stack = true,
-		close = false,
-		description = "Немного порошка для смешивания",
-		client = {
-			image = "aluminumoxide.png",
-		}
-	},
-
-	["wet_gold_phone"] = {
-		label = "Wet Gold Phone",
-		weight = 700,
-		stack = false,
-		close = true,
-		description = "Did you really think that swimming in the ocean with your phone was a good idea?",
-		client = {
-			image = "wet_gold_phone.png",
-		}
-	},
-
-	["weed_og-kush"] = {
-		label = "OG Kush weed",
-		weight = 150,
-		stack = true,
-		close = true,
-		description = "It does not contain a description.",
-		client = {
-			image = "weed_og-kush.png",
-		}
-	},
-
-	["skullcamo_attachment"] = {
-		label = "Skull Camo",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "A skull camo for a weapon",
-		client = {
-			image = "skullcamo_attachment.png",
-		}
-	},
-
-	["coke_small_brick"] = {
-		label = "Пакет кокаина",
-		weight = 350,
-		stack = false,
-		close = true,
-		description = "Маленький пакет кокаина, в основном используется для сделок и занимает много места",
-		client = {
-			image = "coke_small_brick.png",
-		}
-	},
-
-	["precision_muzzle_brake"] = {
-		label = "Точный тормозной раструб",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Тормозной раструб для оружия",
-		client = {
-			image = "precision_muzzle_brake.png",
-		}
-	},
-
-	["advancedrepairkit"] = {
-		label = "Продвинутый набор для ремонта",
-		weight = 4000,
-		stack = true,
-		close = true,
-		description = "Хороший ящик с инструментами для ремонта вашего транспортного средства",
-		client = {
-			image = "advancedkit.png",
-		}
-	},
-
-	["diving_fill"] = {
-		label = "Дайвинг-трубка",
-		weight = 3000,
-		stack = false,
-		close = true,
-		description = "Трубка с кислородом и ребрит",
-		client = {
-			image = "diving_tube.png",
-		}
-	},
-
-	["empty_weed_bag"] = {
-		label = "Empty weed bag",
-		weight = 50,
-		stack = true,
-		close = true,
-		description = "It does not contain a description.",
-		client = {
-			image = "empty_weed_bag.png",
-		}
-	},
-
-	["moneybag"] = {
-		label = "Мешок с деньгами",
-		weight = 0,
-		stack = false,
-		close = true,
-		description = "Сумка с наличными",
-		client = {
-			image = "moneybag.png",
-		}
-	},
-
-	["veh_exterior"] = {
-		label = "Экстерьер",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Улучшить внешний вид транспортного средства",
-		client = {
-			image = "veh_exterior.png",
-		}
-	},
-
-	["powerbank"] = {
-		label = "Power Bank",
-		weight = 200,
-		stack = false,
-		close = true,
-		description = "Incredible portable charger!",
-		client = {
-			image = "powerbank.png",
-		}
-	},
-
-	["markedbills"] = {
-		label = "Маркированные деньги",
-		weight = 1000,
-		stack = false,
-		close = true,
-		description = "Деньги?",
-		client = {
-			image = "markedbills.png",
-		}
-	},
-
-	["wet_green_phone"] = {
-		label = "Wet Green Phone",
-		weight = 700,
-		stack = false,
-		close = true,
-		description = "They say that Quasar Smartphone is the same as an iPhone, what do you think?",
-		client = {
-			image = "wet_green_phone.png",
-		}
-	},
-
-	["nitrous"] = {
-		label = "Нитро",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Ускорься, педаль газа! :D",
-		client = {
-			image = "nitrous.png",
-		}
-	},
-
-	["advscope_attachment"] = {
-		label = "Продвинутый прицел",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Продвинутый прицел для оружия",
-		client = {
-			image = "advscope_attachment.png",
-		}
-	},
-
-	["laptop"] = {
-		label = "Ноутбук",
-		weight = 4000,
-		stack = true,
-		close = true,
-		description = "Дорогой ноутбук",
-		client = {
-			image = "laptop.png",
-		}
-	},
-
-	["green_phone"] = {
-		label = "Green Phone",
-		weight = 700,
-		stack = false,
-		close = true,
-		description = "They say that Quasar Smartphone is the same as an iPhone, what do you think?",
-		client = {
-			image = "green_phone.png",
-		}
-	},
-
-	["ifaks"] = {
-		label = "ifaks",
-		weight = 200,
-		stack = true,
-		close = true,
-		description = "ifaks для лечения и полного удаления стресса.",
-		client = {
-			image = "ifaks.png",
-		}
-	},
-
-	["weed_whitewidow_seed"] = {
-		label = "Семена Белой вдовы",
-		weight = 0,
-		stack = true,
-		close = false,
-		description = "Семя марихуаны Белой вдовы",
-		client = {
-			image = "weed_seed.png",
-		}
-	},
-
-	["casinochips"] = {
-		label = "Фишки казино",
-		weight = 0,
-		stack = true,
-		close = false,
-		description = "Фишки для азартных игр в казино",
-		client = {
-			image = "casinochips.png",
-		}
-	},
-
-	["firework2"] = {
-		label = "Poppelers",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Фейерверки",
-		client = {
-			image = "firework2.png",
-		}
-	},
-
-	["zebracamo_attachment"] = {
-		label = "Zebra Camo",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "A zebra camo for a weapon",
-		client = {
-			image = "zebracamo_attachment.png",
-		}
-	},
-
-	["heavyarmor"] = {
-		label = "Тяжелая броня",
-		weight = 5000,
-		stack = true,
-		close = true,
-		description = "Немного защиты не повредит... верно?",
-		client = {
-			image = "armor.png",
-		}
-	},
-
-	["diamond_ring"] = {
-		label = "Бриллиантовое кольцо",
-		weight = 1500,
-		stack = true,
-		close = true,
-		description = "Бриллиантовое кольцо кажется мне джекпотом!",
-		client = {
-			image = "diamond_ring.png",
-		}
-	},
-
-	["empty_evidence_bag"] = {
-		label = "Пустая сумка для улик",
-		weight = 0,
-		stack = true,
-		close = false,
-		description = "Часто используется для хранения ДНК из крови, гильз и многое другое",
-		client = {
-			image = "evidence.png",
-		}
-	},
-	
-	["evidencebag"] = {
-    label = 'Evidence Bag',
-    weight = 100,
-    stack = false,
-    close = true,
-    description = 'Used to collect and preserve evidence at crime scenes',
-    useable = true,
-    client = {
-        export = 'dp-evidencebag.openEvidenceBag'
-    }
+	label = "Сталь",
+	weight = 300, -- кусок стали ~300 г
+	stack = true,
+	close = false,
+	description = "Хороший кусочек металла, который, возможно, можно использовать для чего-то",
+	client = {
+		image = "steel.png",
+	}
 },
 
-	["samsungphone"] = {
-		label = "Samsung S10",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Очень дорогой телефон",
-		client = {
-			image = "samsungphone.png",
-		}
-	},
+["goldbar"] = {
+	label = "Золотой слиток",
+	weight = 7000, -- стандартный слиток ~7 кг
+	stack = true,
+	close = true,
+	description = "Кажется, довольно дорого",
+	client = {
+		image = "goldbar.png",
+	}
+},
 
-	["jeans"] = {
-		label = "Джинсы",
-		weight = 0,
-		stack = false,
-		close = true,
-		description = "Джинсы",
-		client = {
-			image = "jeans.png",
-		}
+["weed_amnesia_seed"] = {
+	label = "Семя Amnesia",
+	weight = 1, -- семечко ~1 г
+	stack = true,
+	close = true,
+	description = "Описание отсутствует.",
+	client = {
+		image = "weed_amnesia_seed.png",
+	}
+},
+
+["ironoxide"] = {
+	label = "Железный порошок",
+	weight = 100, -- порошок ~100 г
+	stack = true,
+	close = false,
+	description = "Немного порошка для смешивания.",
+	client = {
+		image = "ironoxide.png",
+	}
+},
+
+["vodka"] = {
+	label = "Водка",
+	weight = 500, -- бутылка 0.5 л ~500 г
+	stack = true,
+	close = true,
+	description = "Для всех испытывающих жажду",
+	client = {
+		image = "vodka.png",
+	}
+},
+
+["coke_brick"] = {
+	label = "Брикет кокаина",
+	weight = 1000, -- 1 кг
+	stack = false,
+	close = true,
+	description = "Тяжелая упаковка кокаина, в основном используется для сделок и занимает много места",
+	client = {
+		image = "coke_brick.png",
+	}
+},
+
+["kurkakola"] = {
+	label = "Кола",
+	weight = 330, -- банка ~330 г
+	stack = true,
+	close = true,
+	description = "Для всех испытывающих жажду",
+	client = {
+		image = "cola.png",
+	}
+},
+
+["red_phone"] = {
+	label = "Красный телефон",
+	weight = 180, -- смартфон ~180 г
+	stack = false,
+	close = true,
+	description = "Говорят, Quasar Smartphone такой же, как iPhone, а вы как думаете?",
+	client = {
+		image = "red_phone.png",
+	}
+},
+
+["weed_skunk_seed"] = {
+	label = "Семя Skunk",
+	weight = 1,
+	stack = true,
+	close = true,
+	description = "Описание отсутствует.",
+	client = {
+		image = "weed_skunk_seed.png",
+	}
+},
+
+["weaponlicense"] = {
+	label = "Лицензия на оружие",
+	weight = 5, -- пластиковая карта ~5 г
+	stack = false,
+	close = true,
+	description = "Лицензия на оружие",
+	client = {
+		image = "weapon_license.png",
 	},
+	server = {
+		export = 'um-idcard.weaponlicense'
+	}
+},
+
+["phone_hack"] = {
+	label = "Чип для взлома телефона",
+	weight = 50, -- чип ~50 г
+	stack = false,
+	close = true,
+	description = "С этим чипом вы можете получить доступ к скрытым областям Discord.",
+	client = {
+		image = "phone_hack.png",
+	}
+},
+
+["crack_baggy"] = {
+	label = "Пакетик крэка",
+	weight = 10, -- маленький пакетик ~10 г
+	stack = true,
+	close = true,
+	description = "Чтобы быстрее обрадоваться",
+	client = {
+		image = "crack_baggy.png",
+	}
+},
+
+["handcuffs"] = {
+	label = "Наручники",
+	weight = 340, -- металлические наручники ~340 г
+	stack = true,
+	close = false,
+	description = "Наручники",
+	client = {
+		image = "handcuffs.png",
+	}
+},
+
+["filled_evidence_bag"] = {
+	label = "Сумка с уликами",
+	weight = 200, -- пакет с уликами ~200 г
+	stack = false,
+	close = false,
+	description = "Наполненная сумка с уликами, чтобы вычислить виновного >:(",
+	client = {
+		image = "evidence.png",
+	}
+},
+
+["black_phone"] = {
+	label = "Черный телефон",
+	weight = 180,
+	stack = false,
+	close = true,
+	description = "Говорят, Quasar Smartphone такой же, как iPhone, а вы как думаете?",
+	client = {
+		image = "black_phone.png",
+	}
+},
+
+["iphone"] = {
+	label = "Телефон",
+	weight = 180,
+	stack = true,
+	close = true,
+	description = "Дорогой телефон",
+	client = {
+		image = "iphone.png",
+	}
+},
+
+["labkey"] = {
+	label = "Ключ",
+	weight = 80, -- ключ металлический ~80 г
+	stack = false,
+	close = true,
+	description = "Ключ от замка...?",
+	client = {
+		image = "labkey.png",
+	}
+},
+
+["aluminumoxide"] = {
+	label = "Алюминиевый порошок",
+	weight = 100,
+	stack = true,
+	close = false,
+	description = "Немного порошка для смешивания",
+	client = {
+		image = "aluminumoxide.png",
+	}
+},
+
+["wet_gold_phone"] = {
+	label = "Мокрый золотой телефон",
+	weight = 180,
+	stack = false,
+	close = true,
+	description = "Вы правда думали, что купаться в океане с телефоном — хорошая идея?",
+	client = {
+		image = "wet_gold_phone.png",
+	}
+},
+
+["weed_og-kush"] = {
+	label = "Трава OG Kush",
+	weight = 150, -- стандартная фасовка ~150 г
+	stack = true,
+	close = true,
+	description = "Описание отсутствует.",
+	client = {
+		image = "weed_og-kush.png",
+	}
+},
+
+["skullcamo_attachment"] = {
+	label = "Камуфляж 'Череп'",
+	weight = 400, -- камуфляж накладка ~400 г
+	stack = true,
+	close = true,
+	description = "Камуфляж для оружия с черепом",
+	client = {
+		image = "skullcamo_attachment.png",
+	}
+},
+
+["coke_small_brick"] = {
+	label = "Пакет кокаина",
+	weight = 350, -- 350 г
+	stack = false,
+	close = true,
+	description = "Маленький пакет кокаина, в основном используется для сделок и занимает много места",
+	client = {
+		image = "coke_small_brick.png",
+	}
+},
+
+["precision_muzzle_brake"] = {
+	label = "Точный тормозной раструб",
+	weight = 600, -- тормозной раструб ~600 г
+	stack = true,
+	close = true,
+	description = "Тормозной раструб для оружия",
+	client = {
+		image = "precision_muzzle_brake.png",
+	}
+},
+
+["advancedrepairkit"] = {
+	label = "Продвинутый набор для ремонта",
+	weight = 5000, -- набор инструментов ~5 кг
+	stack = true,
+	close = true,
+	description = "Хороший ящик с инструментами для ремонта вашего транспортного средства",
+	client = {
+		image = "advancedkit.png",
+	}
+},
+
+["diving_fill"] = {
+	label = "Дайвинг-трубка",
+	weight = 3000, -- комплект с баллоном ~3 кг
+	stack = false,
+	close = true,
+	description = "Трубка с кислородом и ребрит",
+	client = {
+		image = "diving_tube.png",
+	}
+},
+
+["empty_weed_bag"] = {
+	label = "Пустой пакетик для травки",
+	weight = 5, -- пустой пакетик ~5 г
+	stack = true,
+	close = true,
+	description = "Описание отсутствует.",
+	client = {
+		image = "empty_weed_bag.png",
+	}
+},
+
+["moneybag"] = {
+	label = "Мешок с деньгами",
+	weight = 2500, -- мешок с купюрами ~2.5 кг
+	stack = false,
+	close = true,
+	description = "Сумка с наличными",
+	client = {
+		image = "moneybag.png",
+	}
+},
+
+["veh_exterior"] = {
+	label = "Экстерьер",
+	weight = 2000, -- комплект тюнинга ~2 кг
+	stack = true,
+	close = true,
+	description = "Улучшить внешний вид транспортного средства",
+	client = {
+		image = "veh_exterior.png",
+	}
+},
+
+["powerbank"] = {
+	label = "Повербанк",
+	weight = 300, -- повербанк ~300 г
+	stack = false,
+	close = true,
+	description = "Невероятно портативная зарядка!",
+	client = {
+		image = "powerbank.png",
+	}
+},
+
+["markedbills"] = {
+	label = "Маркированные деньги",
+	weight = 1000,
+	stack = false,
+	close = true,
+	description = "Деньги?",
+	client = {
+		image = "markedbills.png",
+	}
+},
+
+["wet_green_phone"] = {
+	label = "Мокрый зелёный телефон",
+	weight = 180,
+	stack = false,
+	close = true,
+	description = "Говорят, Quasar Smartphone такой же, как iPhone, а вы как думаете?",
+	client = {
+		image = "wet_green_phone.png",
+	}
+},
+
+["nitrous"] = {
+	label = "Нитро",
+	weight = 3500, -- баллон ~3.5 кг
+	stack = true,
+	close = true,
+	description = "Ускорься, педаль газа! :D",
+	client = {
+		image = "nitrous.png",
+	}
+},
+
+["advscope_attachment"] = {
+	label = "Продвинутый прицел",
+	weight = 900, -- оптика ~900 г
+	stack = true,
+	close = true,
+	description = "Продвинутый прицел для оружия",
+	client = {
+		image = "advscope_attachment.png",
+	}
+},
+
+["laptop"] = {
+	label = "Ноутбук",
+	weight = 2200, -- ноутбук ~2.2 кг
+	stack = true,
+	close = true,
+	description = "Дорогой ноутбук",
+	client = {
+		image = "laptop.png",
+	}
+},
+
+["green_phone"] = {
+	label = "Зелёный телефон",
+	weight = 180,
+	stack = false,
+	close = true,
+	description = "Говорят, Quasar Smartphone такой же, как iPhone, а вы как думаете?",
+	client = {
+		image = "green_phone.png",
+	}
+},
+
+["ifaks"] = {
+	label = "ИФАК",
+	weight = 250, -- набор первой помощи ~250 г
+	stack = true,
+	close = true,
+	description = "ИФАК для лечения и полного удаления стресса.",
+	client = {
+		image = "ifaks.png",
+	}
+},
+
+["weed_whitewidow_seed"] = {
+	label = "Семя Белой вдовы",
+	weight = 1,
+	stack = true,
+	close = false,
+	description = "Семя марихуаны Белой вдовы",
+	client = {
+		image = "weed_seed.png",
+	}
+},
+
+["casinochips"] = {
+	label = "Фишки казино",
+	weight = 5, -- одна фишка ~5 г
+	stack = true,
+	close = false,
+	description = "Фишки для азартных игр в казино",
+	client = {
+		image = "casinochips.png",
+	}
+},
+
+["firework2"] = {
+	label = "Поппелеры",
+	weight = 1000, -- упаковка фейерверков ~1 кг
+	stack = true,
+	close = true,
+	description = "Фейерверки",
+	client = {
+		image = "firework2.png",
+	}
+},
+
+["zebracamo_attachment"] = {
+	label = "Камуфляж 'Зебра'",
+	weight = 400,
+	stack = true,
+	close = true,
+	description = "Камуфляж для оружия с узором зебры",
+	client = {
+		image = "zebracamo_attachment.png",
+	}
+},
+
+["heavyarmor"] = {
+	label = "Тяжёлая броня",
+	weight = 9000, -- тяжёлый бронежилет ~9 кг
+	stack = true,
+	close = true,
+	description = "Немного защиты не повредит... верно?",
+	client = {
+		image = "armor.png",
+	}
+},
+
+["diamond_ring"] = {
+	label = "Бриллиантовое кольцо",
+	weight = 5, -- кольцо ~5 г
+	stack = true,
+	close = true,
+	description = "Бриллиантовое кольцо кажется мне джекпотом!",
+	client = {
+		image = "diamond_ring.png",
+	}
+},
+
+["empty_evidence_bag"] = {
+	label = "Пустая сумка для улик",
+	weight = 5, -- пустая сумка ~5 г
+	stack = true,
+	close = false,
+	description = "Часто используется для хранения ДНК из крови, гильз и многое другое",
+	client = {
+		image = "evidence.png",
+	}
+},
 	
+["evidencebag"] = {
+	label = 'Сумка для улик',
+	weight = 100,
+	stack = false,
+	close = true,
+	description = 'Используется для сбора и хранения улик на месте преступления',
+	useable = true,
+	client = {
+		export = 'dp-evidencebag.openEvidenceBag'
+	}
+},
 
-	["wet_red_phone"] = {
-		label = "Wet Red Phone",
-		weight = 700,
-		stack = false,
-		close = true,
-		description = "Did you really think that swimming in the ocean with your phone was a good idea?",
-		client = {
-			image = "wet_red_phone.png",
-		}
-	},
+["samsungphone"] = {
+	label = "Samsung S10",
+	weight = 180,
+	stack = true,
+	close = true,
+	description = "Очень дорогой телефон",
+	client = {
+		image = "samsungphone.png",
+	}
+},
 
-	["brushcamo_attachment"] = {
-		label = "Brushstroke Camo",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "A brushstroke camo for a weapon",
-		client = {
-			image = "brushcamo_attachment.png",
-		}
-	},
+["jeans"] = {
+	label = "Джинсы",
+	weight = 500, -- джинсы ~0.5 кг
+	stack = false,
+	close = true,
+	description = "Джинсы",
+	client = {
+		image = "jeans.png",
+	}
+},
 
-	["cuff"] = {
-		label = "Cuff",
-		weight = 100,
-		stack = true,
-		close = true,
-		description = "Your description here",
-		client = {
-			image = "cuff.png",
-		}
-	},
+["wet_red_phone"] = {
+	label = "Мокрый красный телефон",
+	weight = 180,
+	stack = false,
+	close = true,
+	description = "Вы правда думали, что купаться в океане с телефоном — хорошая идея?",
+	client = {
+		image = "wet_red_phone.png",
+	}
+},
 
-	["comp_attachment"] = {
-		label = "Компенсатор",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Компенсатор для оружия",
-		client = {
-			image = "comp_attachment.png",
-		}
-	},
+["brushcamo_attachment"] = {
+	label = "Камуфляж 'Браш'",
+	weight = 400,
+	stack = true,
+	close = true,
+	description = "Камуфляж для оружия с мазками кисти",
+	client = {
+		image = "brushcamo_attachment.png",
+	}
+},
 
-	["armor"] = {
-		label = "Броня",
-		weight = 5000,
-		stack = true,
-		close = true,
-		description = "Немного защиты не повредит... верно?",
-		client = {
-			image = "armor.png",
-		}
-	},
+["cuff"] = {
+	label = "Наручники (каб. стяжка)",
+	weight = 60, -- пластиковая стяжка ~60 г
+	stack = true,
+	close = true,
+	description = "Ваше описание здесь",
+	client = {
+		image = "cuff.png",
+	}
+},
 
-	["barrel_attachment"] = {
-		label = "Ствол",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Ствол для оружия",
-		client = {
-			image = "barrel_attachment.png",
-		}
-	},
+["comp_attachment"] = {
+	label = "Компенсатор",
+	weight = 350, -- компенсатор ~350 г
+	stack = true,
+	close = true,
+	description = "Компенсатор для оружия",
+	client = {
+		image = "comp_attachment.png",
+	}
+},
 
+["armor"] = {
+	label = "Броня",
+	weight = 8000, -- бронежилет ~8 кг
+	stack = true,
+	close = true,
+	description = "Немного защиты не повредит... верно?",
+	client = {
+		image = "armor.png",
+	}
+},
+
+["barrel_attachment"] = {
+	label = "Ствол",
+	weight = 1000, -- стальной ствол ~1 кг
+	stack = true,
+	close = true,
+	description = "Ствол для оружия",
+	client = {
+		image = "barrel_attachment.png",
+	}
+},
 	["goldchain"] = {
 		label = "Золотая цепочка",
 		weight = 1500,
@@ -1293,17 +1867,6 @@ return {
 		description = "Оно очень хрупкое, будьте осторожны",
 		client = {
 			image = "glass.png",
-		}
-	},
-
-	["whiskey"] = {
-		label = "Виски",
-		weight = 500,
-		stack = true,
-		close = true,
-		description = "Для всех испытывающих жажду",
-		client = {
-			image = "whiskey.png",
 		}
 	},
 
@@ -2416,1565 +2979,2538 @@ return {
 	},
 
 	["split_end_muzzle_brake"] = {
-		label = "Тормозной раструб с разделенным концом",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Тормозной раструб для оружия",
-		client = {
-			image = "split_end_muzzle_brake.png",
-		}
-	},
-
-	["weed_ogkush"] = {
-		label = "OGKush 2г",
-		weight = 200,
-		stack = true,
-		close = false,
-		description = "Мешок с марихуаной 2 г OGKush",
-		client = {
-			image = "weed_baggy.png",
-		}
-	},
-
-	["rope"] = {
-		label = "Rope",
-		weight = 100,
-		stack = true,
-		close = true,
-		description = "Your description here",
-		client = {
-			image = "rope.png",
-		}
-	},
-
-	["newscam"] = {
-		label = "Новостная камера",
-		weight = 100,
-		stack = false,
-		close = true,
-		description = "Камера для новостей",
-		client = {
-			image = "newscam.png",
-		}
-	},
-
-	["digicamo_attachment"] = {
-		label = "Цифровой камуфляж",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Цифровой камуфляж для оружия",
-		client = {
-			image = "digicamo_attachment.png",
-		}
-	},
-
-	["weed_ogkush_seed"] = {
-		label = "Семена OGKush",
-		weight = 0,
-		stack = true,
-		close = true,
-		description = "Семя марихуаны OGKush",
-		client = {
-			image = "weed_seed.png",
-		}
-	},
-
-	["diamond"] = {
-		label = "Бриллиант",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Бриллиант кажется мне джекпотом!",
-		client = {
-			image = "diamond.png",
-		}
-	},
-
-	["veh_wheels"] = {
-		label = "Колеса",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Улучшить колеса транспортного средства",
-		client = {
-			image = "veh_wheels.png",
-		}
-	},
-
-	["weed_purplehaze_seed"] = {
-		label = "Семена Пурпурного тумана",
-		weight = 0,
-		stack = true,
-		close = true,
-		description = "Семя марихуаны Пурпурного тумана",
-		client = {
-			image = "weed_seed.png",
-		}
-	},
-
-	["binoculars"] = {
-		label = "Бинокль",
-		weight = 600,
-		stack = true,
-		close = true,
-		description = "Скрытый прослушиватель...",
-		client = {
-			image = "binoculars.png",
-		}
-	},
-
-	["helmet"] = {
-		label = "Шлем",
-		weight = 0,
-		stack = false,
-		close = true,
-		description = "Шлем",
-		client = {
-			image = "helmet.png",
-		}
-	},
-
-	["clip_attachment"] = {
-		label = "Магазин",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Магазин для оружия",
-		client = {
-			image = "clip_attachment.png",
-		}
-	},
-
-	["wet_blue_phone"] = {
-		label = "Wet Blue Phone",
-		weight = 700,
-		stack = false,
-		close = true,
-		description = "Did you really think that swimming in the ocean with your phone was a good idea?",
-		client = {
-			image = "wet_blue_phone.png",
-		}
-	},
-
-	["luxuryfinish_attachment"] = {
-		label = "Роскошная отделка",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Роскошная отделка для оружия",
-		client = {
-			image = "luxuryfinish_attachment.png",
-		}
-	},
-
-	["firework3"] = {
-		label = "WipeOut",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Фейерверки",
-		client = {
-			image = "firework3.png",
-		}
-	},
-
-	["metalscrap"] = {
-		label = "Металлический лом",
-		weight = 100,
-		stack = true,
-		close = false,
-		description = "С него можно что-то крутое сделать",
-		client = {
-			image = "metalscrap.png",
-		}
-	},
-
-	["weed_skunk"] = {
-		label = "Skunk weed",
-		weight = 150,
-		stack = true,
-		close = true,
-		description = "It does not contain a description.",
-		client = {
-			image = "weed_skunk.png",
-		}
-	},
-
-	["perseuscamo_attachment"] = {
-		label = "Perseus Camo",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "A perseus camo for a weapon",
-		client = {
-			image = "perseuscamo_attachment.png",
-		}
-	},
-
-	["flat_muzzle_brake"] = {
-		label = "Плоский тормозной раструб",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Тормозной раструб для оружия",
-		client = {
-			image = "flat_muzzle_brake.png",
-		}
-	},
-
-	["meth"] = {
-		label = "Метамфетамин",
-		weight = 100,
-		stack = true,
-		close = true,
-		description = "Пакет мета",
-		client = {
-			image = "meth_baggy.png",
-		}
-	},
-
-	["tunerlaptop"] = {
-		label = "Тюнинг-чип",
-		weight = 2000,
-		stack = false,
-		close = true,
-		description = "С этим тюнинг-чипом вы можете получить свой автомобиль на стероидах... Если вы знаете, что делаете",
-		client = {
-			image = "tunerchip.png",
-		}
-	},
-
-	["coffee"] = {
-		label = "Кофе",
-		weight = 200,
-		stack = true,
-		close = true,
-		description = "Для подъема тонуса",
-		client = {
-			image = "coffee.png",
-		}
-	},
-
-	["heavy_duty_muzzle_brake"] = {
-		label = "Тяжелый тормозной раструб",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Тормозной раструб для оружия",
-		client = {
-			image = "heavy_duty_muzzle_brake.png",
-		}
-	},
-
-	["tablet"] = {
-		label = "Планшет",
-		weight = 2000,
-		stack = true,
-		close = true,
-		description = "Дорогой планшет",
-		client = {
-			image = "tablet.png",
-		}
-	},
-
-	["water_bottle"] = {
-		label = "Бутылка воды",
-		weight = 500,
-		stack = true,
-		close = true,
-		description = "Для всех испытывающих жажду",
-		client = {
-			image = "water_bottle.png",
-		}
-	},
-
-	["veh_turbo"] = {
-		label = "Турбо",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Установить турбонагнетатель в транспортное средство",
-		client = {
-			image = "veh_turbo.png",
-		}
-	},
-
-	["rolling_paper"] = {
-		label = "Бумага для курения",
-		weight = 0,
-		stack = true,
-		close = true,
-		description = "Бумага, специально созданная для оболочки и курения табака или каннабиса.",
-		client = {
-			image = "rolling_paper.png",
-		}
-	},
-
-	["weed_white-widow"] = {
-		label = "White Widow weed",
-		weight = 150,
-		stack = true,
-		close = true,
-		description = "It does not contain a description.",
-		client = {
-			image = "weed_white-widow.png",
-		}
-	},
-
-	["walkstick"] = {
-		label = "Ходунки",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Ходунки для вас, бабушки.. HAHA",
-		client = {
-			image = "walkstick.png",
-		}
-	},
-
-	["veh_interior"] = {
-		label = "Интерьер",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Улучшить интерьер транспортного средства",
-		client = {
-			image = "veh_interior.png",
-		}
-	},
-
-	["leopardcamo_attachment"] = {
-		label = "Leopard Camo",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "A leopard camo for a weapon",
-		client = {
-			image = "leopardcamo_attachment.png",
-		}
-	},
-
-	["weed_nutrition"] = {
-		label = "Weed nutrition",
-		weight = 500,
-		stack = true,
-		close = true,
-		description = "It does not contain a description.",
-		client = {
-			image = "weed_nutrition.png",
-		}
-	},
-
-	["rolex"] = {
-		label = "Золотые часы",
-		weight = 1500,
-		stack = true,
-		close = true,
-		description = "Золотые часы кажутся мне джекпотом!",
-		client = {
-			image = "rolex.png",
-		}
-	},
-
-	["sessantacamo_attachment"] = {
-		label = "Sessanta Nove Camo",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "A sessanta nove camo for a weapon",
-		client = {
-			image = "sessantacamo_attachment.png",
-		}
-	},
-
-	["drum_attachment"] = {
-		label = "Барабан",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Барабан для оружия",
-		client = {
-			image = "drum_attachment.png",
-		}
-	},
-
-	["bellend_muzzle_brake"] = {
-		label = "Тормозной раструб с загнутым концом",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Тормозной раструб для оружия",
-		client = {
-			image = "bellend_muzzle_brake.png",
-		}
-	},
-
-	["veh_suspension"] = {
-		label = "Подвеска",
-		weight = 1000,
-		stack = true,
-		close = true,
-		description = "Улучшить подвеску транспортного средства",
-		client = {
-			image = "veh_suspension.png",
-		}
-	},
-
-	["stickynote"] = {
-		label = "Записка",
-		weight = 0,
-		stack = false,
-		close = false,
-		description = "Иногда удобно что-то запомнить :)",
-		client = {
-			image = "stickynote.png",
-		}
-	},
-
-	['vehiclekeys'] = {
-		label = 'Ключи от транспорта',
-		weight = 10,
-		stack = false,
-		close = true,
-	},
-
-	['keys'] = {
-		label = 'Ключи от двери',
-		weight = 10,
-		stack = false,
-		close = true,
-	},
-
-
-	["stretcher"] = {
-		label = "Stretcher",
-		weight = 200,
-		stack = true,
-		close = true,
-		description = "A stretcher used to moving patients who require medical care.",
-	},
-
-	["icepack"] = {
-		label = "Ice Pack",
-		weight = 200,
-		stack = true,
-		close = true,
-		description = "An ice pack used to reduce swelling and provide relief from pain and inflammation.",
-	},
-
-	["medicalbag"] = {
-		label = "Medical Bag",
-		weight = 220,
-		stack = true,
-		close = true,
-		description = "A comprehensive medical kit for treating injuries and ailments.",
-	},
-
-	["defibrillator"] = {
-		label = "Defibrillator",
-		weight = 100,
-		stack = true,
-		close = true,
-		description = "Used for reviving patients.",
-	},
-
-	["suturekit"] = {
-		label = "Suture Kit",
-		weight = 100,
-		stack = true,
-		close = true,
-		description = "A kit containing surgical tools and materials for stitching and closing wounds.",
-	},
-
-	["tweezers"] = {
-		label = "Tweezers",
-		weight = 100,
-		stack = true,
-		close = true,
-		description = "Precision tweezers for safely removing foreign objects, such as bullets, from wounds.",
-	},
-
-	["emstablet"] = {
-		label = "Ems tablet",
-		weight = 200,
-		stack = true,
-		close = true,
-	},
-	["burncream"] = {
-		label = "Burn Cream",
-		weight = 100,
-		stack = true,
-		close = true,
-		description = "Specialized cream for treating and soothing minor burns and skin irritations.",
-	},
-	['medicalbag'] = {
-		label = 'Medical Bag',
-		weight = 220,
-		stack = true,
-		description = "A comprehensive medical kit for treating injuries and ailments.",
-	},
-	
-	['bandage'] = {
-		label = 'Bandage',
-		weight = 100,
-		stack = true,
-		description = "A simple bandage used to cover and protect wounds.",
-	},
-	
-	['defibrillator'] = {
-		label = 'Defibrillator',
-		weight = 100,
-		stack = true,
-		description = "Used for reviving patients.",
-	},
-	
-	['tweezers'] = {
-		label = 'Tweezers',
-		weight = 100,
-		stack = true,
-		description = "Precision tweezers for safely removing foreign objects, such as bullets, from wounds.",
-	},
-	
-	['burncream'] = {
-		label = 'Burn Cream',
-		weight = 100,
-		stack = true,
-		description = "Specialized cream for treating and soothing minor burns and skin irritations.",
-	},
-	
-	['suturekit'] = {
-		label = 'Suture Kit',
-		weight = 100,
-		stack = true,
-		description = "A kit containing surgical tools and materials for stitching and closing wounds.",
-	},
-	
-	['icepack'] = {
-		label = 'Ice Pack',
-		weight = 200,
-		stack = true,
-		description = "An ice pack used to reduce swelling and provide relief from pain and inflammation.",
-	},
-	
-	['stretcher'] = {
-		label = 'Stretcher',
-		weight = 200,
-		stack = true,
-		description = "A stretcher used to moving patients who require medical care.",
-	},
-	
-	['emstablet'] = {
-		label = 'Ems tablet',
-		weight = 200,
-		stack = true,
-		client = {
-			export = 'ars_ambulancejob.openDistressCalls'
-		}
-	},
-
-	["petfood"] = {
-		label = "pet food",
-		weight = 500,
-		stack = true,
-		close = true,
-		description = "food for your companion!",
-		client = {
-			image = "petfood.png",
-		}
-	},
-
-	["keepcompanionmtlion"] = {
-		label = "MtLion",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "MtLion is your royal companion!",
-		client = {
-			image = "A_C_MtLion.png",
-		}
-	},
-
-	["petwaterbottleportable"] = {
-		label = "Portable water bottle",
-		weight = 1000,
-		stack = false,
-		close = true,
-		description = "Flask to store water for your pets",
-		client = {
-			image = "petwaterbottleportable.png",
-		}
-	},
-
-	["keepcompanionhen"] = {
-		label = "Hen",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Hen is your royal companion!",
-		client = {
-			image = "A_C_Hen.png",
-		}
-	},
-
-	["keepcompanioncoyote"] = {
-		label = "Coyote",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Coyote is your royal companion!",
-		client = {
-			image = "A_C_Coyote.png",
-		}
-	},
-
-	["keepcompanionrat"] = {
-		label = "Rat",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Your royal companion!",
-		client = {
-			image = "A_C_Rat.png",
-		}
-	},
-
-	["keepcompanionrottweiler"] = {
-		label = "Rottweiler",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Rottweiler is your royal companion!",
-		client = {
-			image = "A_Rottweiler.png",
-		}
-	},
-
-	["collarpet"] = {
-		label = "Pet collar",
-		weight = 500,
-		stack = true,
-		close = true,
-		description = "Rename your pets!",
-		client = {
-			image = "collarpet.png",
-		}
-	},
-
-	["keepcompanionwesty"] = {
-		label = "Westy",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Westy is your royal companion!",
-		client = {
-			image = "A_C_Westy.png",
-		}
-	},
-
-	["keepcompanioncat"] = {
-		label = "Cat",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Cat is your royal companion!",
-		client = {
-			image = "A_C_Cat_01.png",
-		}
-	},
-
-	["keepcompanionpoodle"] = {
-		label = "Poodle",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Poodle is your royal companion!",
-		client = {
-			image = "A_C_Poodle.png",
-		}
-	},
-
-	["petgroomingkit"] = {
-		label = "Pet Grooming Kit",
-		weight = 1000,
-		stack = false,
-		close = true,
-		description = "Pet Grooming Kit",
-		client = {
-			image = "petgroomingkit.png",
-		}
-	},
-
-	["keepcompanionhusky"] = {
-		label = "Husky",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Husky is your royal companion!",
-		client = {
-			image = "A_C_Husky.png",
-		}
-	},
-
-	["keepcompanionmtlion2"] = {
-		label = "Panter",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Panter is your royal companion!",
-		client = {
-			image = "A_C_MtLion.png",
-		}
-	},
-
-	["keepcompanionshepherd"] = {
-		label = "Shepherd",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Shepherd is your royal companion!",
-		client = {
-			image = "A_C_shepherd.png",
-		}
-	},
-
-	["keepcompanionrabbit"] = {
-		label = "Rabbit",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Rabbit is your royal companion!",
-		client = {
-			image = "A_C_Rabbit_01.png",
-		}
-	},
-
-	["petnametag"] = {
-		label = "Name tag",
-		weight = 500,
-		stack = true,
-		close = true,
-		description = "Rename your pet",
-		client = {
-			image = "petnametag.png",
-		}
-	},
-
-	["keepcompanionretriever"] = {
-		label = "Retriever",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Retriever is your royal companion!",
-		client = {
-			image = "A_C_Retriever.png",
-		}
-	},
-
-	["firstaidforpet"] = {
-		label = "First aid for pet",
-		weight = 500,
-		stack = true,
-		close = true,
-		description = "Revive your pet!",
-		client = {
-			image = "firstaidforpet.png",
-		}
-	},
-
-	["keepcompanionpug"] = {
-		label = "Pug",
-		weight = 500,
-		stack = false,
-		close = true,
-		description = "Pug is your royal companion!",
-		client = {
-			image = "A_C_Pug.png",
-		}
-	},
-
-	["Mdt"] = {
-		label = "Полицейский планшет",
-		weight = 100,
-		stack = true,
-		close = true,
-		description = "Планшет копов",
-		client = {
-			image = "mdt.png",
-		}
-	},
-
-	["tenkgoldchain"] = {
-		label = "10k Gold Chain",
-		weight = 2000,
-		stack = true,
-		close = true,
-		description = "10 carat golden chain",
-		client = {
-			image = "10kgoldchain.png",
-		}
-	},
-
-	["item_bench"] = {
-		label = "Workbench",
-		weight = 15000,
-		stack = false,
-		close = false,
-		description = "A workbench to craft items.",
-		client = {
-			image = "workbench.png",
-		}
-	},
-	
-	['weed'] = {
-   label = 'Weed',
-   weight = 1,
-   stack = true,
+	label = "Тормозной раструб с разделенным концом",
+	weight = 600, -- облегчённый дульный тормоз ~600 г
+	stack = true,
+	close = true,
+	description = "Тормозной раструб для оружия",
+	client = {
+		image = "split_end_muzzle_brake.png",
+	}
 },
 
-['liquid_meth'] = {
-   label = 'Liquid Meth',
-   weight = 1,
-   stack = true,
+["weed_ogkush"] = {
+	label = "OGKush 2г",
+	weight = 2, -- 2 грамма
+	stack = true,
+	close = false,
+	description = "Мешок с марихуаной 2 г OGKush",
+	client = {
+		image = "weed_baggy.png",
+	}
 },
 
-['baggy'] = {
-   label = 'Baggy',
-   weight = 10,
-   stack = true,
+["rope"] = {
+	label = "Верёвка",
+	weight = 250, -- моток верёвки ~250 г
+	stack = true,
+	close = true,
+	description = "Ваше описание здесь",
+	client = {
+		image = "rope.png",
+	}
 },
 
-['bagged_weed'] = {
-   label = 'Пакетик с марихуаной',
-   weight = 20,
-   stack = true,
+["newscam"] = {
+	label = "Новостная камера",
+	weight = 2500, -- камера ~2.5 кг
+	stack = false,
+	close = true,
+	description = "Камера для новостей",
+	client = {
+		image = "newscam.png",
+	}
 },
 
-['bagged_meth'] = {
-   label = 'Пакетик с метом',
-   weight = 20,
-   stack = true,
+["digicamo_attachment"] = {
+	label = "Цифровой камуфляж",
+	weight = 400, -- накладка ~400 г
+	stack = true,
+	close = true,
+	description = "Цифровой камуфляж для оружия",
+	client = {
+		image = "digicamo_attachment.png",
+	}
 },
 
-['bagging_table'] = {
-   label = 'Bagging Table',
-   weight = 1000,
-   stack = true,
+["weed_ogkush_seed"] = {
+	label = "Семена OGKush",
+	weight = 1,
+	stack = true,
+	close = true,
+	description = "Семя марихуаны OGKush",
+	client = {
+		image = "weed_seed.png",
+	}
 },
 
-['cauldron'] = {
-   label = 'Cauldron',
-   weight = 500,
-   stack = true,
+["diamond"] = {
+	label = "Бриллиант",
+	weight = 5, -- 1 кара́т = 0,2 г, крупный ~5 г
+	stack = true,
+	close = true,
+	description = "Бриллиант кажется мне джекпотом!",
+	client = {
+		image = "diamond.png",
+	}
 },
 
-['coca_leaf'] = {
-   label = 'Coca Leaf',
-   weight = 5,
-   stack = true,
+["veh_wheels"] = {
+	label = "Колёса",
+	weight = 3500, -- комплект дисков ~3.5 кг
+	stack = true,
+	close = true,
+	description = "Улучшить колёса транспортного средства",
+	client = {
+		image = "veh_wheels.png",
+	}
 },
 
-['coke_base'] = {
-   label = 'Cocaine Base',
-   weight = 1,
-   stack = true,
+["weed_purplehaze_seed"] = {
+	label = "Семена Пурпурного тумана",
+	weight = 1,
+	stack = true,
+	close = true,
+	description = "Семя марихуаны Пурпурного тумана",
+	client = {
+		image = "weed_seed.png",
+	}
 },
 
-['meth_cooking_table'] = {
-   label = 'Meth Cooking Table',
-   weight = 1000,
-   stack = true,
+["binoculars"] = {
+	label = "Бинокль",
+	weight = 600, -- бинокль ~600 г
+	stack = true,
+	close = true,
+	description = "Скрытый прослушиватель...",
+	client = {
+		image = "binoculars.png",
+	}
 },
 
-['phos'] = {
-   label = 'phos',
-   weight = 1,
-   stack = true,
+["helmet"] = {
+	label = "Шлем",
+	weight = 1200, -- шлем ~1.2 кг
+	stack = false,
+	close = true,
+	description = "Шлем",
+	client = {
+		image = "helmet.png",
+	}
 },
 
-['acid'] = {
-   label = 'Acid',
-   weight = 1,
-   stack = true,
+["clip_attachment"] = {
+	label = "Магазин",
+	weight = 400, -- магазин ~400 г
+	stack = true,
+	close = true,
+	description = "Магазин для оружия",
+	client = {
+		image = "clip_attachment.png",
+	}
 },
 
-['pseudo'] = {
-   label = 'Pseudo',
-   weight = 1,
-   stack = true,
+["wet_blue_phone"] = {
+	label = "Мокрый синий телефон",
+	weight = 180,
+	stack = false,
+	close = true,
+	description = "Вы правда думали, что купаться в океане с телефоном — хорошая идея?",
+	client = {
+		image = "wet_blue_phone.png",
+	}
 },
 
-['explosive_meth'] = {
-   label = 'Explosive Meth',
-   weight = 1,
-   stack = true,
+["luxuryfinish_attachment"] = {
+	label = "Роскошная отделка",
+	weight = 400,
+	stack = true,
+	close = true,
+	description = "Роскошная отделка для оружия",
+	client = {
+		image = "luxuryfinish_attachment.png",
+	}
 },
 
-['mixer'] = {
-   label = 'Mixer',
-   weight = 1,
-   stack = true,
+["firework3"] = {
+	label = "WipeOut",
+	weight = 800,
+	stack = true,
+	close = true,
+	description = "Фейерверки",
+	client = {
+		image = "firework3.png",
+	}
 },
 
-['gasoline'] = {
-   label = 'Gasoline',
-   weight = 500,
-   stack = true,
-},
-
-['meth_oven'] = {
-   label = 'Meth Oven',
-   weight = 2500,
-   stack = true,
-},
-
-['coke_oven'] = {
-   label = 'Coke Oven',
-   weight = 2500,
-   stack = true,
-},
-
-['cocaine'] = {
-   label = 'Пакетик с кокаином',
-   weight = 1,
-   stack = true,
-},
-
-['meth'] = {
-   label = 'Meth',
-   weight = 1,
-   stack = true,
-},
-
-['cannabis_seed'] = {
-   label = 'Cannabis seed',
-   weight = 1,
-   stack = true,
-},
-
-['coca_seed'] = {
-   label = 'Coca Seed',
-   weight = 1,
-   stack = true,
-},
-
-['plant_pot'] = {
-   label = 'Plant Pot',
-   weight = 100,
-   stack = true,
-},
-
-['fertilizer'] = {
-   label = 'Fertilizer',
-   weight = 10,
-   stack = true,
-},
-
-['water_bottle'] = {
-   label = 'Water Bottle',
-   weight = 100,
-   stack = true,
-},
-
-['default_lamp'] = {
-   label = 'Lamp',
-   weight = 200,
-   stack = true,
-},
-
-['press'] = {
-   label = 'Press',
-   weight = 2500,
-   stack = true,
-},
-
-['coke_brick'] = {
-   label = 'Coke Brick',
-   weight = 100,
-   stack = true,
-},
-
-
-	["attachment_bench"] = {
-		label = "Attachment Workbench",
-		weight = 15000,
-		stack = false,
-		close = false,
-		description = "A workbench for crafting attachments.",
-		client = {
-			image = "attworkbench.png",
-		}
-	},
-
-
---akqbcrime
-['rope'] = {['name'] = 'rope', ['label'] = 'Rope', ['weight'] = 100, ['type'] = 'item', ['image'] = 'rope.png', ['unique'] = false, ['useable'] = true, ['shouldClose'] = true, ['combinable'] = nil, ['description'] = 'Your description here'},
-['blindfold'] = {['name'] = 'blindfold', ['label'] = 'Blindfold', ['weight'] = 100, ['type'] = 'item', ['image'] = 'blindfold.png', ['unique'] = false, ['useable'] = true, ['shouldClose'] = true, ['combinable'] = nil, ['description'] = 'Your description here'},
-['cuff'] = {['name'] = 'cuff', ['label'] = 'Cuff', ['weight'] = 100, ['type'] = 'item', ['image'] = 'cuff.png', ['unique'] = false, ['useable'] = true, ['shouldClose'] = true, ['combinable'] = nil, ['description'] = 'Your description here'},
-['key'] = {['name'] = 'key', ['label'] = 'Armbrace', ['weight'] = 100, ['type'] = 'item', ['image'] = 'key.png', ['unique'] = false, ['useable'] = true, ['shouldClose'] = true, ['combinable'] = nil, ['description'] = 'Your description here'},
-
-
---fivecodekey
-['vehiclekeys'] = {
-    label = 'Vehicle Keys',
-    weight = 10,
-    stack = false,
-    close = true,
-},
-
-
---qs housing
-["weed_white-widow"] = {
-    label = "White Widow weed",
-    weight = 150,
-    stack = false,
+["metalscrap"] = {
+	label = "Металлический лом",
+	weight = 200, -- куски лома ~200 г
+	stack = true,
+	close = false,
+	description = "С него можно что-то крутое сделать",
+	client = {
+		image = "metalscrap.png",
+	}
 },
 
 ["weed_skunk"] = {
-    label = "Skunk weed",
-    weight = 150,
-    stack = false,
+	label = "Трава Skunk",
+	weight = 2,
+	stack = true,
+	close = true,
+	description = "Описание отсутствует.",
+	client = {
+		image = "weed_skunk.png",
+	}
 },
 
-["weed_purple-haze"] = {
-    label = "Purple Haze weed",
-    weight = 150,
-    stack = false,
+["perseuscamo_attachment"] = {
+	label = "Камуфляж Perseus",
+	weight = 400,
+	stack = true,
+	close = true,
+	description = "Камуфляж Perseus для оружия",
+	client = {
+		image = "perseuscamo_attachment.png",
+	}
 },
 
-["weed_og-kush"] = {
-    label = "OG Kush weed",
-    weight = 150,
-    stack = false,
+["flat_muzzle_brake"] = {
+	label = "Плоский тормозной раструб",
+	weight = 600,
+	stack = true,
+	close = true,
+	description = "Тормозной раструб для оружия",
+	client = {
+		image = "flat_muzzle_brake.png",
+	}
 },
 
-["weed_amnesia"] = {
-    label = "Amnesia weed",
-    weight = 150,
-    stack = false,
+["meth"] = {
+	label = "Метамфетамин",
+	weight = 1,
+	stack = true,
+	close = true,
+	description = "Пакет мета",
+	client = {
+		image = "meth_baggy.png",
+	}
 },
 
-["weed_ak47"] = {
-    label = "AK47 weed",
-    weight = 150,
-    stack = false,
+["tunerlaptop"] = {
+	label = "Тюнинг-чип",
+	weight = 400, -- чип ~400 г
+	stack = false,
+	close = true,
+	description = "С этим тюнинг-чипом вы можете получить свой автомобиль на стероидах... Если вы знаете, что делаете",
+	client = {
+		image = "tunerchip.png",
+	}
 },
 
-["weed_white-widow_seed"] = {
-    label = "White Widow seed",
-    weight = 50,
-    stack = false,
+["coffee"] = {
+	label = "Кофе",
+	weight = 220, -- стакан кофе ~220 г
+	stack = true,
+	close = true,
+	description = "Для подъема тонуса",
+	client = {
+		image = "coffee.png",
+	}
 },
 
-["weed_skunk_seed"] = {
-    label = "Skunk seed",
-    weight = 50,
-    stack = false,
+["heavy_duty_muzzle_brake"] = {
+	label = "Тяжелый тормозной раструб",
+	weight = 1000,
+	stack = true,
+	close = true,
+	description = "Тормозной раструб для оружия",
+	client = {
+		image = "heavy_duty_muzzle_brake.png",
+	}
 },
 
-["weed_purple-haze_seed"] = {
-    label = "Purple Haze seed",
-    weight = 50,
-    stack = false,
+["tablet"] = {
+	label = "Планшет",
+	weight = 500, -- компактный планшет ~0.5 кг
+	stack = true,
+	close = true,
+	description = "Дорогой планшет",
+	client = {
+		image = "tablet.png",
+	}
 },
 
-["weed_og-kush_seed"] = {
-    label = "OG Kush seed",
-    weight = 50,
-    stack = false,
+["water_bottle"] = {
+	label = "Бутылка воды",
+	weight = 500, -- 0.5 литра воды
+	stack = true,
+	close = true,
+	description = "Для всех испытывающих жажду",
+	client = {
+		image = "water_bottle.png",
+	}
 },
 
-["weed_amnesia_seed"] = {
-    label = "Amnesia seed",
-    weight = 50,
-    stack = false,
+["veh_turbo"] = {
+	label = "Турбо",
+	weight = 2200, -- турбокомпрессор ~2.2 кг
+	stack = true,
+	close = true,
+	description = "Установить турбонагнетатель в транспортное средство",
+	client = {
+		image = "veh_turbo.png",
+	}
 },
 
-["weed_ak47_seed"] = {
-    label = "AK47 seed",
-    weight = 50,
-    stack = false,
+["rolling_paper"] = {
+	label = "Бумага для курения",
+	weight = 1, -- пачка бумаги ~1 г
+	stack = true,
+	close = true,
+	description = "Бумага, специально созданная для оболочки и курения табака или каннабиса.",
+	client = {
+		image = "rolling_paper.png",
+	}
 },
 
-["empty_weed_bag"] = {
-    label = "Empty weed bag",
-    weight = 50,
-    stack = true,
+["weed_white-widow"] = {
+	label = "Трава White Widow",
+	weight = 2,
+	stack = true,
+	close = true,
+	description = "Описание отсутствует.",
+	client = {
+		image = "weed_white-widow.png",
+	}
+},
+
+["walkstick"] = {
+	label = "Ходунки",
+	weight = 800, -- трость ~0.8 кг
+	stack = true,
+	close = true,
+	description = "Ходунки для вас, бабушки.. HAHA",
+	client = {
+		image = "walkstick.png",
+	}
+},
+
+["veh_interior"] = {
+	label = "Интерьер",
+	weight = 2000, -- комплект тюнинга ~2 кг
+	stack = true,
+	close = true,
+	description = "Улучшить интерьер транспортного средства",
+	client = {
+		image = "veh_interior.png",
+	}
+},
+
+["leopardcamo_attachment"] = {
+	label = "Камуфляж Leopard",
+	weight = 400,
+	stack = true,
+	close = true,
+	description = "Камуфляж Leopard для оружия",
+	client = {
+		image = "leopardcamo_attachment.png",
+	}
 },
 
 ["weed_nutrition"] = {
-    label = "Weed nutrition",
-    weight = 500,
-    stack = false,
+	label = "Удобрение для марихуаны",
+	weight = 500, -- упаковка ~500 г
+	stack = true,
+	close = true,
+	description = "Описание отсутствует.",
+	client = {
+		image = "weed_nutrition.png",
+	}
+},
+
+["rolex"] = {
+	label = "Золотые часы",
+	weight = 150, -- часы ~150 г
+	stack = true,
+	close = true,
+	description = "Золотые часы кажутся мне джекпотом!",
+	client = {
+		image = "rolex.png",
+	}
+},
+
+["sessantacamo_attachment"] = {
+	label = "Камуфляж Sessanta Nove",
+	weight = 400,
+	stack = true,
+	close = true,
+	description = "Камуфляж Sessanta Nove для оружия",
+	client = {
+		image = "sessantacamo_attachment.png",
+	}
+},
+
+["drum_attachment"] = {
+	label = "Барабан",
+	weight = 900, -- барабанный магазин ~900 г
+	stack = true,
+	close = true,
+	description = "Барабан для оружия",
+	client = {
+		image = "drum_attachment.png",
+	}
+},
+
+["bellend_muzzle_brake"] = {
+	label = "Тормозной раструб с загнутым концом",
+	weight = 600,
+	stack = true,
+	close = true,
+	description = "Тормозной раструб для оружия",
+	client = {
+		image = "bellend_muzzle_brake.png",
+	}
+},
+
+["veh_suspension"] = {
+	label = "Подвеска",
+	weight = 3000, -- комплект подвески ~3 кг
+	stack = true,
+	close = true,
+	description = "Улучшить подвеску транспортного средства",
+	client = {
+		image = "veh_suspension.png",
+	}
+},
+
+["stickynote"] = {
+	label = "Записка",
+	weight = 3, -- бумажка ~3 г
+	stack = false,
+	close = false,
+	description = "Иногда удобно что-то запомнить :)",
+	client = {
+		image = "stickynote.png",
+	}
+},
+
+['vehiclekeys'] = {
+	label = 'Ключи от транспорта',
+	weight = 50, -- связка ключей ~50 г
+	stack = false,
+	close = true,
+},
+
+['keys'] = {
+	label = 'Ключи от двери',
+	weight = 50,
+	stack = false,
+	close = true,
+},
+
+["stretcher"] = {
+	label = "Каталка",
+	weight = 12000, -- медицинская каталка ~12 кг
+	stack = true,
+	close = true,
+	description = "Каталка для перевозки пациентов, нуждающихся в медицинской помощи.",
+},
+
+["icepack"] = {
+	label = "Пакет со льдом",
+	weight = 200, -- пакет ~200 г
+	stack = true,
+	close = true,
+	description = "Пакет со льдом для уменьшения отека и облегчения боли и воспаления.",
+},
+
+["medicalbag"] = {
+	label = "Медицинская сумка",
+	weight = 900, -- медсумка ~0.9 кг
+	stack = true,
+	close = true,
+	description = "Комплексный медицинский набор для лечения травм и недугов.",
+},
+
+["defibrillator"] = {
+	label = "Дефибриллятор",
+	weight = 3000, -- переносной дефибриллятор ~3 кг
+	stack = true,
+	close = true,
+	description = "Используется для реанимации пациентов.",
+},
+
+["suturekit"] = {
+	label = "Набор для швов",
+	weight = 120, -- набор ~120 г
+	stack = true,
+	close = true,
+	description = "Набор для наложения и снятия швов.",
+},
+
+["tweezers"] = {
+	label = "Пинцет",
+	weight = 30, -- пинцет ~30 г
+	stack = true,
+	close = true,
+	description = "Пинцет для аккуратного извлечения посторонних предметов, например, пуль.",
+},
+
+["emstablet"] = {
+	label = "EMS-планшет",
+	weight = 400, -- планшет ~400 г
+	stack = true,
+	close = true,
+},
+
+["burncream"] = {
+	label = "Крем от ожогов",
+	weight = 50, -- тюбик ~50 г
+	stack = true,
+	close = true,
+	description = "Крем для лечения и облегчения ожогов и раздражений кожи.",
+},
+
+['bandage'] = {
+	label = 'Бинт',
+	weight = 30,
+	stack = true,
+	description = "Обычный бинт для закрытия и защиты ран.",
+},
+
+["petfood"] = {
+	label = "Корм для питомца",
+	weight = 500, -- упаковка ~500 г
+	stack = true,
+	close = true,
+	description = "Корм для вашего питомца!",
+	client = {
+		image = "petfood.png",
+	}
+},
+
+["keepcompanionmtlion"] = {
+	label = "Горный лев",
+	weight = 500, -- аксессуар
+	stack = false,
+	close = true,
+	description = "Горный лев — ваш верный спутник!",
+	client = {
+		image = "A_C_MtLion.png",
+	}
+},
+
+["petwaterbottleportable"] = {
+	label = "Поилка для питомца",
+	weight = 150, -- поилка ~150 г
+	stack = false,
+	close = true,
+	description = "Фляжка для воды для ваших питомцев",
+	client = {
+		image = "petwaterbottleportable.png",
+	}
+},
+
+["keepcompanionhen"] = {
+	label = "Курица",
+	weight = 500,
+	stack = false,
+	close = true,
+	description = "Курица — ваш верный спутник!",
+	client = {
+		image = "A_C_Hen.png",
+	}
+},
+
+["keepcompanioncoyote"] = {
+	label = "Койот",
+	weight = 500,
+	stack = false,
+	close = true,
+	description = "Койот — ваш верный спутник!",
+	client = {
+		image = "A_C_Coyote.png",
+	}
+},
+
+["keepcompanionrat"] = {
+	label = "Крыса",
+	weight = 250,
+	stack = false,
+	close = true,
+	description = "Ваш верный спутник!",
+	client = {
+		image = "A_C_Rat.png",
+	}
+},
+
+["keepcompanionrottweiler"] = {
+	label = "Ротвейлер",
+	weight = 800,
+	stack = false,
+	close = true,
+	description = "Ротвейлер — ваш верный спутник!",
+	client = {
+		image = "A_Rottweiler.png",
+	}
+},
+
+["collarpet"] = {
+	label = "Ошейник для питомца",
+	weight = 50, -- ошейник ~50 г
+	stack = true,
+	close = true,
+	description = "Переименуйте ваших питомцев!",
+	client = {
+		image = "collarpet.png",
+	}
+},
+
+["keepcompanionwesty"] = {
+	label = "Вести",
+	weight = 400,
+	stack = false,
+	close = true,
+	description = "Вести — ваш верный спутник!",
+	client = {
+		image = "A_C_Westy.png",
+	}
+},
+
+["keepcompanioncat"] = {
+	label = "Кошка",
+	weight = 400,
+	stack = false,
+	close = true,
+	description = "Кошка — ваш верный спутник!",
+	client = {
+		image = "A_C_Cat_01.png",
+	}
+},
+
+["keepcompanionpoodle"] = {
+	label = "Пудель",
+	weight = 400,
+	stack = false,
+	close = true,
+	description = "Пудель — ваш верный спутник!",
+	client = {
+		image = "A_C_Poodle.png",
+	}
+},
+
+["petgroomingkit"] = {
+	label = "Набор для груминга",
+	weight = 300, -- набор ~300 г
+	stack = false,
+	close = true,
+	description = "Набор для груминга питомца",
+	client = {
+		image = "petgroomingkit.png",
+	}
+},
+
+["keepcompanionhusky"] = {
+	label = "Хаски",
+	weight = 800,
+	stack = false,
+	close = true,
+	description = "Хаски — ваш верный спутник!",
+	client = {
+		image = "A_C_Husky.png",
+	}
+},
+
+["keepcompanionmtlion2"] = {
+	label = "Пантера",
+	weight = 500,
+	stack = false,
+	close = true,
+	description = "Пантера — ваш верный спутник!",
+	client = {
+		image = "A_C_MtLion.png",
+	}
+},
+
+["keepcompanionshepherd"] = {
+	label = "Овчарка",
+	weight = 800,
+	stack = false,
+	close = true,
+	description = "Овчарка — ваш верный спутник!",
+	client = {
+		image = "A_C_shepherd.png",
+	}
+},
+
+["keepcompanionrabbit"] = {
+	label = "Кролик",
+	weight = 350,
+	stack = false,
+	close = true,
+	description = "Кролик — ваш верный спутник!",
+	client = {
+		image = "A_C_Rabbit_01.png",
+	}
+},
+
+["petnametag"] = {
+	label = "Именной жетон",
+	weight = 30, -- жетон ~30 г
+	stack = true,
+	close = true,
+	description = "Переименуйте вашего питомца",
+	client = {
+		image = "petnametag.png",
+	}
+},
+
+["keepcompanionretriever"] = {
+	label = "Ретривер",
+	weight = 700,
+	stack = false,
+	close = true,
+	description = "Ретривер — ваш верный спутник!",
+	client = {
+		image = "A_C_Retriever.png",
+	}
+},
+
+["firstaidforpet"] = {
+	label = "Первая помощь для питомца",
+	weight = 120, -- набор ~120 г
+	stack = true,
+	close = true,
+	description = "Оживите вашего питомца!",
+	client = {
+		image = "firstaidforpet.png",
+	}
+},
+
+["keepcompanionpug"] = {
+	label = "Мопс",
+	weight = 400,
+	stack = false,
+	close = true,
+	description = "Мопс — ваш верный спутник!",
+	client = {
+		image = "A_C_Pug.png",
+	}
+},
+
+["Mdt"] = {
+	label = "Полицейский планшет",
+	weight = 400,
+	stack = true,
+	close = true,
+	description = "Планшет копов",
+	client = {
+		image = "mdt.png",
+	}
+},
+
+["tenkgoldchain"] = {
+	label = "Золотая цепочка 10 карат",
+	weight = 65,
+	stack = true,
+	close = true,
+	description = "Золотая цепочка 10 карат",
+	client = {
+		image = "10kgoldchain.png",
+	}
+},
+
+["item_bench"] = {
+	label = "Верстак",
+	weight = 15000, -- тяжёлый верстак ~15 кг
+	stack = false,
+	close = false,
+	description = "Верстак для крафта предметов.",
+	client = {
+		image = "workbench.png",
+	}
+},
+
+['weed'] = {
+	label = 'Трава',
+	weight = 2, -- 2 г
+	stack = true,
+},
+
+['liquid_meth'] = {
+	label = 'Жидкий мет',
+	weight = 1,
+	stack = true,
+},
+
+['baggy'] = {
+	label = 'Пакетик',
+	weight = 5,
+	stack = true,
+},
+
+['bagged_weed'] = {
+	label = 'Пакет травы',
+	weight = 2,
+	stack = true,
+},
+
+['bagged_meth'] = {
+	label = 'Пакетик с метом',
+	weight = 2,
+	stack = true,
+},
+
+['bagging_table'] = {
+	label = 'Стол для фасовки',
+	weight = 7000,
+	stack = true,
+},
+
+['cauldron'] = {
+	label = 'Котёл',
+	weight = 2000,
+	stack = true,
+},
+
+['coca_leaf'] = {
+	label = 'Листья коки',
+	weight = 2,
+	stack = true,
+},
+
+['coke_base'] = {
+	label = 'Кокаиновая база',
+	weight = 1,
+	stack = true,
+},
+
+['meth_cooking_table'] = {
+	label = 'Стол для варки мета',
+	weight = 7000,
+	stack = true,
+},
+
+['phos'] = {
+	label = 'Фосфор',
+	weight = 1,
+	stack = true,
+},
+
+['acid'] = {
+	label = 'Кислота',
+	weight = 1,
+	stack = true,
+},
+
+['pseudo'] = {
+	label = 'Псевдо',
+	weight = 1,
+	stack = true,
+},
+
+['explosive_meth'] = {
+	label = 'Взрывной мет',
+	weight = 1,
+	stack = true,
+},
+
+['mixer'] = {
+	label = 'Миксер',
+	weight = 800,
+	stack = true,
+},
+
+['gasoline'] = {
+	label = 'Бензин',
+	weight = 400,
+	stack = true,
+},
+
+['meth_oven'] = {
+	label = 'Печь для мета',
+	weight = 2500,
+	stack = true,
+},
+
+['coke_oven'] = {
+	label = 'Печь для кокаина',
+	weight = 2500,
+	stack = true,
+},
+
+["cocaine"] = {
+	label = "Пакетик с кокаином",
+	weight = 1,
+	stack = true,
+},
+
+['meth'] = {
+	label = 'Мет',
+	weight = 1,
+	stack = true,
+},
+
+['cannabis_seed'] = {
+	label = 'Семя каннабиса',
+	weight = 1,
+	stack = true,
+},
+
+['coca_seed'] = {
+	label = 'Семя коки',
+	weight = 1,
+	stack = true,
+},
+
+['plant_pot'] = {
+	label = 'Горшок для растений',
+	weight = 80, -- пластиковый или глиняный горшок ~80 г
+	stack = true,
+},
+
+['fertilizer'] = {
+	label = 'Удобрение',
+	weight = 10,
+	stack = true,
+},
+
+['water_bottle'] = {
+	label = 'Бутылка воды',
+	weight = 500, -- 0.5л воды
+	stack = true,
+},
+
+['default_lamp'] = {
+	label = 'Лампа',
+	weight = 220, -- настольная лампа ~220 г
+	stack = true,
+},
+
+['press'] = {
+	label = 'Пресс',
+	weight = 2500, -- механический пресс ~2.5 кг
+	stack = true,
+},
+
+['coke_brick'] = {
+	label = 'Кокаиновый брикет',
+	weight = 1000, -- 1 кг
+	stack = true,
+},
+
+["attachment_bench"] = {
+	label = "Верстак для модификаций",
+	weight = 15000, -- тяжёлый верстак ~15 кг
+	stack = false,
+	close = false,
+	description = "Верстак для создания модификаций.",
+	client = {
+		image = "attworkbench.png",
+	}
+},
+
+-- akqbcrime
+['rope'] = {['name'] = 'rope', ['label'] = 'Верёвка', ['weight'] = 250, ['type'] = 'item', ['image'] = 'rope.png', ['unique'] = false, ['useable'] = true, ['shouldClose'] = true, ['combinable'] = nil, ['description'] = 'Ваше описание здесь'},
+['blindfold'] = {['name'] = 'blindfold', ['label'] = 'Повязка на глаза', ['weight'] = 15, ['type'] = 'item', ['image'] = 'blindfold.png', ['unique'] = false, ['useable'] = true, ['shouldClose'] = true, ['combinable'] = nil, ['description'] = 'Ваше описание здесь'},
+['cuff'] = {['name'] = 'cuff', ['label'] = 'Стяжка', ['weight'] = 5, ['type'] = 'item', ['image'] = 'cuff.png', ['unique'] = false, ['useable'] = true, ['shouldClose'] = true, ['combinable'] = nil, ['description'] = 'Ваше описание здесь'},
+['key'] = {['name'] = 'key', ['label'] = 'Ключ от двери', ['weight'] = 50, ['type'] = 'item', ['image'] = 'key.png', ['unique'] = false, ['useable'] = true, ['shouldClose'] = true, ['combinable'] = nil, ['description'] = 'Ваше описание здесь'},
+
+-- fivecodekey
+['vehiclekeys'] = {
+	label = 'Ключи от транспорта',
+	weight = 50,
+	stack = false,
+	close = true,
+},
+
+-- qs housing
+["weed_white-widow"] = {
+	label = "Трава White Widow",
+	weight = 2,
+	stack = false,
+},
+
+["weed_skunk"] = {
+	label = "Трава Skunk",
+	weight = 2,
+	stack = false,
+},
+
+["weed_purple-haze"] = {
+	label = "Трава Purple Haze",
+	weight = 2,
+	stack = false,
+},
+
+["weed_og-kush"] = {
+	label = "Трава OG Kush",
+	weight = 2,
+	stack = false,
+},
+
+["weed_amnesia"] = {
+	label = "Трава Amnesia",
+	weight = 2,
+	stack = false,
+},
+
+["weed_ak47"] = {
+	label = "Трава AK47",
+	weight = 2,
+	stack = false,
+},
+
+["weed_white-widow_seed"] = {
+	label = "Семя White Widow",
+	weight = 1,
+	stack = false,
+},
+
+["weed_skunk_seed"] = {
+	label = "Семя Skunk",
+	weight = 1,
+	stack = false,
+},
+
+["weed_purple-haze_seed"] = {
+	label = "Семя Purple Haze",
+	weight = 1,
+	stack = false,
+},
+
+["weed_og-kush_seed"] = {
+	label = "Семя OG Kush",
+	weight = 1,
+	stack = false,
+},
+
+["weed_amnesia_seed"] = {
+	label = "Семя Amnesia",
+	weight = 1,
+	stack = false,
+},
+
+["weed_ak47_seed"] = {
+	label = "Семя AK47",
+	weight = 1,
+	stack = false,
+},
+
+["empty_weed_bag"] = {
+	label = "Пустой пакетик для травки",
+	weight = 5,
+	stack = true,
+},
+
+["weed_nutrition"] = {
+	label = "Удобрение для марихуаны",
+	weight = 500,
+	stack = false,
 },
 
 ["lockpick"] = {
-    label = "Lockpick",
-    weight = 100,
-    stack = true,
+	label = "Отмычка",
+	weight = 40,
+	stack = true,
 },
 
 ["police_stormram"] = {
-    label = "Police Storm Ram",
-    weight = 800,
-    stack = false,
+	label = "Полицейский таран",
+	weight = 9000,
+	stack = false,
 },
 
 ['outfitbag'] = {
-	label = 'Outfitbag',
+	label = 'Сумка для одежды',
 	consume = 0,
-	weight = 1,
+	weight = 500,
 	client = {
 		export = 'krs_outfitbag.outfitbag'
 	}
 },
 
 ['uvlight'] = {
-    label = 'UV Light',
-    weight = 25,
-    stack = true,
-    close = true,
-    description = 'To scan for fingerprints',
-    client = {
-        image = 'uvlight.png',
-        usable = true
-    }
+	label = 'УФ-лампа',
+	weight = 60,
+	stack = true,
+	close = true,
+	description = 'Для поиска отпечатков пальцев',
+	client = {
+		image = 'uvlight.png',
+		usable = true
+	}
 },
 
 ['bleachwipes'] = {
-    label = 'Bleach Wipes',
-    weight = 25,
-    stack = true,
-    close = true,
-    description = 'To clean and sanitize',
-    client = {
-        image = 'bleachwipes.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Влажные салфетки',
+	weight = 25,
+	stack = true,
+	close = true,
+	description = 'Для очистки и дезинфекции',
+	client = {
+		image = 'bleachwipes.png',
+		usable = true
+	},
+	combinable = true
 },
 
 ['bobby_pin'] = {
-    label = 'Bobby Pin',
-    weight = 2500,
-    stack = true,
-    close = true,
-    description = 'Can be used as a makeshift tool for picking locks',
-    client = {
-        image = 'bobby_pin.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Шпилька',
+	weight = 1,
+	stack = true,
+	close = true,
+	description = 'Можно использовать как инструмент для взлома замков',
+	client = {
+		image = 'bobby_pin.png',
+		usable = true
+	},
+	combinable = true
 },
 
 ['tracking_bracelet'] = {
-    label = 'Tracking Bracelet',
-    weight = 2500,
-    stack = true,
-    close = true,
-    description = 'Can be used for tracking a suspect',
-    client = {
-        image = 'tracking_bracelet.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Браслет для отслеживания',
+	weight = 50,
+	stack = true,
+	close = true,
+	description = 'Для отслеживания подозреваемого',
+	client = {
+		image = 'tracking_bracelet.png',
+		usable = true
+	},
+	combinable = true
 },
 
--- Medical Bag
 ['medbag'] = {
-    label = 'Medical Bag',
-    weight = 2500,
-    stack = true,
-    close = true,
-    description = 'A bag of medic tools',
-    client = {
-        image = 'medbag.png',
-        usable = true
-    }
+	label = 'Медицинская сумка',
+	weight = 900,
+	stack = true,
+	close = true,
+	description = 'Сумка с медицинскими инструментами',
+	client = {
+		image = 'medbag.png',
+		usable = true
+	}
 },
 
--- Tweezers
 ['tweezers'] = {
-    label = 'Tweezers',
-    weight = 50,
-    stack = true,
-    close = true,
-    description = 'For picking out bullets',
-    client = {
-        image = 'tweezers.png',
-        usable = true
-    }
+	label = 'Пинцет',
+	weight = 30,
+	stack = true,
+	close = true,
+	description = 'Для извлечения пуль и осколков',
+	client = {
+		image = 'tweezers.png',
+		usable = true
+	}
 },
 
--- Suture Kit
 ['suturekit'] = {
-    label = 'Suture Kit',
-    weight = 60,
-    stack = true,
-    close = true,
-    description = 'For stitching your patients',
-    client = {
-        image = 'suturekit.png',
-        usable = true
-    }
+	label = 'Набор для швов',
+	weight = 60,
+	stack = true,
+	close = true,
+	description = 'Для наложения швов',
+	client = {
+		image = 'suturekit.png',
+		usable = true
+	}
 },
 
--- Ice Pack
 ['icepack'] = {
-    label = 'Ice Pack',
-    weight = 110,
-    stack = true,
-    close = true,
-    description = 'To help reduce swelling',
-    client = {
-        image = 'icepack.png',
-        usable = true
-    }
+	label = 'Пакет со льдом',
+	weight = 120,
+	stack = true,
+	close = true,
+	description = 'Для снятия отёка',
+	client = {
+		image = 'icepack.png',
+		usable = true
+	}
 },
 
--- Burn Cream
 ['burncream'] = {
-    label = 'Burn Cream',
-    weight = 125,
-    stack = true,
-    close = true,
-    description = 'To help with burns',
-    client = {
-        image = 'burncream.png',
-        usable = true
-    }
+	label = 'Крем от ожогов',
+	weight = 50,
+	stack = true,
+	close = true,
+	description = 'Для лечения ожогов',
+	client = {
+		image = 'burncream.png',
+		usable = true
+	}
 },
 
--- Defibrillator
 ['defib'] = {
-    label = 'Defibrillator',
-    weight = 1120,
-    stack = true,
-    close = true,
-    description = 'Used to revive patients',
-    client = {
-        image = 'defib.png',
-        usable = true
-    }
+	label = 'Дефибриллятор',
+	weight = 2500,
+	stack = true,
+	close = true,
+	description = 'Используется для реанимации',
+	client = {
+		image = 'defib.png',
+		usable = true
+	}
 },
 
--- Sedative
 ['sedative'] = {
-    label = 'Sedative',
-    weight = 20,
-    stack = true,
-    close = true,
-    description = 'If needed, this will sedate patient',
-    client = {
-        image = 'sedative.png',
-        usable = true
-    }
+	label = 'Седативное',
+	weight = 2,
+	stack = true,
+	close = true,
+	description = 'Для седации пациента',
+	client = {
+		image = 'sedative.png',
+		usable = true
+	}
 },
 
--- Morphine 30MG
 ['morphine30'] = {
-    label = 'Morphine 30MG',
-    weight = 2,
-    stack = true,
-    close = true,
-    description = 'A controlled substance to control pain',
-    client = {
-        image = 'morphine30.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Морфин 30 мг',
+	weight = 2,
+	stack = true,
+	close = true,
+	description = 'Обезболивающее',
+	client = {
+		image = 'morphine30.png',
+		usable = true
+	},
+	combinable = true
 },
 
--- Morphine 15MG
 ['morphine15'] = {
-    label = 'Morphine 15MG',
-    weight = 2,
-    stack = true,
-    close = true,
-    description = 'A controlled substance to control pain',
-    client = {
-        image = 'morphine15.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Морфин 15 мг',
+	weight = 2,
+	stack = true,
+	close = true,
+	description = 'Обезболивающее',
+	client = {
+		image = 'morphine15.png',
+		usable = true
+	},
+	combinable = true
 },
 
--- Percocet 30MG
 ['perc30'] = {
-    label = 'Percocet 30MG',
-    weight = 2,
-    stack = true,
-    close = true,
-    description = 'A controlled substance to control pain',
-    client = {
-        image = 'perc30.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Перкоцет 30 мг',
+	weight = 2,
+	stack = true,
+	close = true,
+	description = 'Обезболивающее',
+	client = {
+		image = 'perc30.png',
+		usable = true
+	},
+	combinable = true
 },
 
--- Percocet 10MG
 ['perc10'] = {
-    label = 'Percocet 10MG',
-    weight = 2,
-    stack = true,
-    close = true,
-    description = 'A controlled substance to control pain',
-    client = {
-        image = 'perc10.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Перкоцет 10 мг',
+	weight = 2,
+	stack = true,
+	close = true,
+	description = 'Обезболивающее',
+	client = {
+		image = 'perc10.png',
+		usable = true
+	},
+	combinable = true
 },
 
--- Percocet 5MG
 ['perc5'] = {
-    label = 'Percocet 5MG',
-    weight = 2,
-    stack = true,
-    close = true,
-    description = 'A controlled substance to control pain',
-    client = {
-        image = 'perc5.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Перкоцет 5 мг',
+	weight = 2,
+	stack = true,
+	close = true,
+	description = 'Обезболивающее',
+	client = {
+		image = 'perc5.png',
+		usable = true
+	},
+	combinable = true
 },
 
--- Vicodin 10MG
 ['vic10'] = {
-    label = 'Vicodin 10MG',
-    weight = 2,
-    stack = true,
-    close = true,
-    description = 'A controlled substance to control pain',
-    client = {
-        image = 'vic10.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Викодин 10 мг',
+	weight = 2,
+	stack = true,
+	close = true,
+	description = 'Обезболивающее',
+	client = {
+		image = 'vic10.png',
+		usable = true
+	},
+	combinable = true
 },
 
--- Vicodin 5MG
 ['vic5'] = {
-    label = 'Vicodin 5MG',
-    weight = 2,
-    stack = true,
-    close = true,
-    description = 'A controlled substance to control pain',
-    client = {
-        image = 'vic5.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Викодин 5 мг',
+	weight = 2,
+	stack = true,
+	close = true,
+	description = 'Обезболивающее',
+	client = {
+		image = 'vic5.png',
+		usable = true
+	},
+	combinable = true
 },
 
--- Medical Kit
 ['medikit'] = {
-    label = 'Medical Kit',
-    weight = 110,
-    stack = true,
-    close = true,
-    description = 'A first aid kit for healing injured people.',
-    client = {
-        image = 'medikit.png',
-        usable = true
-    },
-    combinable = true
+	label = 'Медицинский набор',
+	weight = 500,
+	stack = true,
+	close = true,
+	description = 'Набор первой помощи',
+	client = {
+		image = 'medikit.png',
+		usable = true
+	},
+	combinable = true
 },
 
 ["silver_coin"] = {
-		label = 'Silver Coin',
-		weight = 50,
-	},
+	label = 'Серебряная монета',
+	weight = 30,
+},
 
-	["gold_coin"] = {
-		label = 'Gold Coin',
-		weight = 50,
-	},
+["gold_coin"] = {
+	label = 'Золотая монета',
+	weight = 35,
+},
 
-	["charlotte_ring"] = {
-		label = 'Charlotte Ring',
-		weight = 50,
-	},
+["charlotte_ring"] = {
+	label = 'Кольцо Charlotte',
+	weight = 10,
+},
 
-	["simbolos_chain"] = {
-		label = 'Simbolos Chain',
-		weight = 100,
-	},
+["simbolos_chain"] = {
+	label = 'Цепочка Simbolos',
+	weight = 30,
+},
 
-	["action_figure"] = {
-		label = 'Action Figure',
-		weight = 100,
-	},
+["action_figure"] = {
+	label = 'Фигурка',
+	weight = 60,
+},
 
-	["nominos_ring"] = {
-		label = 'Nominos Ring',
-		weight = 50,
-	},
+["nominos_ring"] = {
+	label = 'Кольцо Nominos',
+	weight = 10,
+},
 
-	["boss_chain"] = {
-		label = 'BOSS Chain',
-		weight = 200,
-	},
+["boss_chain"] = {
+	label = 'Цепочка BOSS',
+	weight = 40,
+},
 
-	["branded_cigarette"] = {
-		label = 'Branded Cigarette',
-		weight = 10,
-	},
+["branded_cigarette"] = {
+	label = 'Марочная сигарета',
+	weight = 2,
+},
 
-	["branded_cigarette_box"] = {
-		label = 'Branded Cigarette Box',
-		weight = 200,
-	},
+["branded_cigarette_box"] = {
+	label = 'Пачка марочных сигарет',
+	weight = 20,
+},
 
-	["ninja_figure"] = {
-		label = 'Ninja Figure',
-		weight = 50,
-	},
+["ninja_figure"] = {
+	label = 'Фигурка ниндзя',
+	weight = 60,
+},
 
-	["painting"] = {
-		label = 'Painting',
-		weight = 100,
-	},
+["painting"] = {
+	label = 'Картина',
+	weight = 1000,
+},
+["chocobox"] = {
+	label = 'Коробка шоколадок',
+	weight = 5000,
+},
+["colabox"] = {
+	label = 'Ящик колы',
+	weight = 12000,
+},
+["beerbox"] = {
+	label = 'Ящик пива',
+	weight = 12000,
+},
+["waterbox"] = {
+	label = 'Ящик воды',
+	weight = 12000,
+},
+["cigarettebox"] = {
+	label = 'Коробка сигарет',
+	weight = 10000,
+},
 
-	["statue"] = {
-		label = 'Statue',
-		weight = 200,
-	},
+["statue"] = {
+	label = 'Статуя',
+	weight = 2500,
+},
 
-	["ancient_egypt_artifact"] = {
-		label = 'Ancient Egypt Artifact',
-		weight = 200,
-	},
+["ancient_egypt_artifact"] = {
+	label = 'Артефакт Древнего Египта',
+	weight = 800,
+},
 
-	["ruby"] = {
-		label = 'Ruby',
-		weight = 100,
-	},
+["ruby"] = {
+	label = 'Рубин',
+	weight = 10,
+},
 
-	["diamond"] = {
-		label = 'Diamond',
-		weight = 100,
-	},
+["diamond"] = {
+	label = 'Бриллиант',
+	weight = 10,
+},
 
-	["danburite"] = {
-		label = 'Danburite',
-		weight = 100,
-	},
+["danburite"] = {
+	label = 'Данбурит',
+	weight = 10,
+},
 
-	["television"] = {
-		label = 'Television',
-		weight = 5000,
-		stack = false
-	},
+["television"] = {
+	label = 'Телевизор',
+	weight = 8000,
+	stack = false
+},
 
-   ["coffee_machine"] = {
-		label = 'Coffee Machine',
-		weight = 1000,
-		stack = false
-	},
+["coffee_machine"] = {
+	label = 'Кофемашина',
+	weight = 4000,
+	stack = false
+},
 
-	["computer"] = {
-		label = 'Computer',
-		weight = 2500,
-		stack = false
-	},
+["computer"] = {
+	label = 'Компьютер',
+	weight = 3000,
+	stack = false
+},
 
-	["microwave"] = {
-		label = 'Microwave',
-		weight = 3500,
-		stack = false
-	},
+["microwave"] = {
+	label = 'Микроволновка',
+	weight = 3500,
+	stack = false
+},
 
-	["music_player"] = {
-		label = 'Music Player',
-		weight = 2000,
-		stack = false
-	},
+["music_player"] = {
+	label = 'Музыкальный плеер',
+	weight = 800,
+	stack = false
+},
 
-	["lockpick"] = {
-		label = 'Lockpick',
-		weight = 10,
-		stack = true
-	},
+["lockpick"] = {
+	label = 'Отмычка',
+	weight = 40,
+	stack = true
+},
 
-	["cutter"] = {
-		label = 'Cutter',
-		weight = 1000,
-		stack = true
-	},
+["cutter"] = {
+	label = 'Кусачки',
+	weight = 350,
+	stack = true
+},
 
-	["can_injector"] = {
-		label = 'CAN Injector',
-		weight = 100,
-		stack = true
-	},
+["can_injector"] = {
+	label = 'CAN-инжектор',
+	weight = 80,
+	stack = true
+},
 
-	["can_injector"] = {
-		label = 'CAN Injector',
-		weight = 100,
-		stack = true
-	},
+["crime_hood"] = {
+	label = 'Капот',
+	weight = 3000,
+	stack = true
+},
 
-	["crime_hood"] = {
-		label = 'Hood',
-		weight = 100,
-		stack = true
-	},
+["crime_rims"] = {
+	label = 'Диски',
+	weight = 2500,
+	stack = true
+},
 
-	["crime_rims"] = {
-		label = 'Rims',
-		weight = 100,
-		stack = true
-	},
+["crime_seat"] = {
+	label = 'Сиденье',
+	weight = 1500,
+	stack = true
+},
 
-	["crime_seat"] = {
-		label = 'Seat',
-		weight = 100,
-		stack = true
-	},
+["crime_bumper"] = {
+	label = 'Бампер',
+	weight = 2500,
+	stack = true
+},
 
-	["crime_bumper"] = {
-		label = 'Bumper',
-		weight = 100,
-		stack = true
-	},
+["crime_externals"] = {
+	label = 'Внешний обвес',
+	weight = 2000,
+	stack = true
+},
 
-	["crime_externals"] = {
-		label = 'Externals',
-		weight = 100,
-		stack = true
-	},
+["crime_tires"] = {
+	label = 'Шины',
+	weight = 2000,
+	stack = true
+},
 
-	["crime_tires"] = {
-		label = 'Tires',
-		weight = 100,
-		stack = true
-	},
+["crime_headlights"] = {
+	label = 'Фары',
+	weight = 600,
+	stack = true
+},
 
-	["crime_headlights"] = {
-		label = 'Headlights',
-		weight = 100,
-		stack = true
-	},
+["crime_turbo"] = {
+	label = 'Турбо',
+	weight = 2200,
+	stack = true
+},
 
-	["crime_turbo"] = {
-		label = 'Turbo',
-		weight = 100,
-		stack = true
-	},
+["crime_batterycar"] = {
+	label = 'Аккумулятор',
+	weight = 900,
+	stack = true
+},
 
-	["crime_batterycar"] = {
-		label = 'Battery',
-		weight = 100,
-		stack = true
-	},
+["crime_frein"] = {
+	label = 'Тормозной диск',
+	weight = 700,
+	stack = true
+},
 
-	["crime_frein"] = {
-		label = 'Frein',
-		weight = 100,
-		stack = true
+-- Сырые продукты 
+['burger_bread_fresh'] = {
+	label = 'Свежая булочка для бургера',
+	weight = 80,
+	consume = 1,
+	client = {
+		image = 'burger_bread_fresh.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели свежую булочку для бургера',
 	},
+},
+['patty'] = {
+	label = 'Котлета для бургера',
+	weight = 100,
+	consume = 1,
+	client = {
+		image = 'patty.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели котлету для бургера',
+	},
+},
+['cheese'] = {
+	label = 'Сыр',
+	weight = 50,
+	consume = 1,
+	client = {
+		image = 'cheese.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели сыр',
+	},
+},
+['ham_leg'] = {
+	label = 'Ветчина',
+	weight = 80,
+	consume = 1,
+	client = {
+		image = 'Ham_leg.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели ветчину',
+	},
+},
+['salad'] = {
+	label = 'Салат',
+	weight = 30,
+	consume = 1,
+	client = {
+		image = 'salad.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели салат',
+	},
+},
+['tomato'] = {
+	label = 'Помидор',
+	weight = 50,
+	consume = 1,
+	client = {
+		image = 'Tomato.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели помидор',
+	},
+},
+['onion'] = {
+	label = 'Лук',
+	weight = 40,
+	consume = 1,
+	client = {
+		image = 'onion.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели лук',
+	},
+},
+['mustard'] = {
+	label = 'Горчица',
+	weight = 15,
+	consume = 1,
+	client = {
+		image = 'mustard.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели горчицу',
+	},
+},
+['sauces'] = {
+	label = 'Соус',
+	weight = 20,
+	consume = 1,
+	client = {
+		image = 'sauces.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели соус',
+	},
+},
+['chickenmeat'] = {
+	label = 'Куриное мясо',
+	weight = 90,
+	consume = 1,
+	client = {
+		image = 'chickenmeat.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели куриное мясо',
+	},
+},
+['fine_meat_cooked'] = {
+	label = 'Колбаска',
+	weight = 90,
+	consume = 1,
+	client = {
+		image = 'fine_meat_cooked.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели колбаску',
+	},
+},
+['bean'] = {
+	label = 'Фасоль',
+	weight = 30,
+	consume = 1,
+	client = {
+		image = 'bean.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели фасоль',
+	},
+},
+['corn'] = {
+	label = 'Кукуруза',
+	weight = 40,
+	consume = 1,
+	client = {
+		image = 'corn.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели кукурузу',
+	},
+},
+['pepper'] = {
+	label = 'Перец',
+	weight = 10,
+	consume = 1,
+	client = {
+		image = 'Pepper.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели перец',
+	},
+},
+['fish_meat_cooked'] = {
+	label = 'Рыба',
+	weight = 90,
+	consume = 1,
+	client = {
+		image = 'fish_meat_cooked.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели рыбу',
+	},
+},
+['bread'] = {
+	label = 'Хлеб',
+	weight = 60,
+	consume = 1,
+	client = {
+		image = 'Bread.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели хлеб',
+	},
+},
+['flour'] = {
+	label = 'Мука',
+	weight = 50,
+	consume = 1,
+	client = {
+		image = 'flour.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели муку',
+	},
+},
+['dough'] = {
+	label = 'Тесто',
+	weight = 80,
+	consume = 1,
+	client = {
+		image = '0.Dought.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели тесто',
+	},
+},
+['pineapple'] = {
+	label = 'Ананас',
+	weight = 120,
+	consume = 1,
+	client = {
+		image = 'pineapple.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели ананас',
+	},
+},
+['avocado'] = {
+	label = 'Авокадо',
+	weight = 60,
+	consume = 1,
+	client = {
+		image = 'avocado.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели авокадо',
+	},
+},
+['potato'] = {
+	label = 'Картофель',
+	weight = 80,
+	consume = 1,
+	client = {
+		image = 'potato.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели картофель',
+	},
+},
+['potato_cook'] = {
+	label = 'Жареный картофель',
+	weight = 90,
+	consume = 1,
+	client = {
+		image = 'potato_cook.png',
+		status = { hunger = 100000, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели жареный картофель',
+	},
+},
+['carrot'] = {
+	label = 'Морковь',
+	weight = 30,
+	consume = 1,
+	client = {
+		image = 'carrot.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели морковь',
+	},
+},
+['paprika'] = {
+	label = 'Паприка',
+	weight = 20,
+	consume = 1,
+	client = {
+		image = 'paprika.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели паприку',
+	},
+},
+['dragonfr'] = {
+	label = 'Питахайя',
+	weight = 80,
+	consume = 1,
+	client = {
+		image = 'dragonfr.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели питахайю',
+	},
+},
+['papaya'] = {
+	label = 'Папайя',
+	weight = 100,
+	consume = 1,
+	client = {
+		image = 'papaya.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели папайю',
+	},
+},
+['mango'] = {
+	label = 'Манго',
+	weight = 100,
+	consume = 1,
+	client = {
+		image = 'Mango.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели манго',
+	},
+},
+['pomegranate'] = {
+	label = 'Гранат',
+	weight = 80,
+	consume = 1,
+	client = {
+		image = 'pomegranate.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели гранат',
+	},
+},
+['orange'] = {
+	label = 'Апельсин',
+	weight = 80,
+	consume = 1,
+	client = {
+		image = 'Orange.png',
+		status = { hunger = 100000, thirst = 100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели апельсин',
+	},
+},
+['salt'] = {
+	label = 'Соль',
+	weight = 10,
+	consume = 1,
+	client = {
+		image = 'Salt.png',
+		status = { hunger = 0, thirst = -100000 },
+		anim = 'eating',
+		prop = nil,
+		usetime = 2000,
+		notification = 'Вы съели соль',
+	},
+},
+
+-- Готовые блюда (полностью восстанавливают, но сушат!)
+['classic_burger'] = {
+    label = 'Классический бургер',
+    weight = 250,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = -100000 },
+        anim = 'eating',
+        prop = nil,
+        usetime = 2000,
+        notification = 'Вы съели классический бургер',
+        image = '0.burger_cheese2.png',
+    },
+},
+
+['bacon_cheeseburger'] = {
+    label = 'Чизбургер с беконом',
+    weight = 270,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = -100000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели чизбургер с беконом',
+        image = '0.burger_baconlov.png',
+    },
+},
+
+['chicken_burrito'] = {
+    label = 'Куриный буррито',
+    weight = 220,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = -100000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели куриный буррито',
+        image = '0.burger_BuritosChicken.png',
+    },
+},
+
+['beef_taco'] = {
+    label = 'Традиционный тако с говядиной',
+    weight = 180,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = -100000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели тако с говядиной',
+        image = '0.burger_tacos.png',
+    },
+},
+
+['vegan_taco'] = {
+    label = 'Вегетарианский тако',
+    weight = 170,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = 200000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели веган тако',
+        image = 'bite_vegan.png',
+    },
+},
+
+['fish_burger'] = {
+    label = 'Бургер с рыбой',
+    weight = 210,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = -100000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели бургер с рыбой',
+        image = '0.burger_fish.png',
+    },
+},
+
+['hotdog'] = {
+    label = 'Хот-дог',
+    weight = 170,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = -100000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели хот-дог',
+        image = '0.burger_hotdog.png',
+    },
+},
+
+['french_fries'] = {
+    label = 'Картофель фри',
+    weight = 100,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = -100000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели картошку фри',
+        image = 'frites_auto.png',
+    },
+},
+
+['caesar_salad'] = {
+    label = 'Салат "Цезарь"',
+    weight = 170,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = 200000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели салат "Цезарь"',
+        image = 'COBB SALAD.png',
+    },
+},
+
+['pizza_margherita'] = {
+    label = 'Пицца Маргарита',
+    weight = 300,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = -100000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели пиццу Маргарита',
+        image = 'TinCan_pizza_frozen.png',
+    },
+},
+
+['ham_cheese_pizza'] = {
+    label = 'Пицца с ветчиной и сыром',
+    weight = 320,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = -100000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели пиццу с ветчиной и сыром',
+        image = 'Cake_cheese.png',
+    },
+},
+
+['vegetable_soup'] = {
+    label = 'Овощной суп',
+    weight = 220,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = 200000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели овощной суп',
+        image = 'campbowl_vegetable_Soup.png',
+    },
+},
+
+['fish_pineapple_burger'] = {
+    label = 'Бургер с рыбой и ананасом',
+    weight = 210,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = 200000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели бургер с рыбой и ананасом',
+        image = 'bite_Fish.png',
+    },
+},
+
+['avocado_burger'] = {
+    label = 'Бургер с авокадо',
+    weight = 210,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = 200000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели бургер с авокадо',
+        image = 'bite_vegan.png',
+    },
+},
+
+['exotic_fruit_salad'] = {
+    label = 'Экзотический фруктовый салат',
+    weight = 150,
+    consume = 1,
+    client = {
+        status = { hunger = 500000, thirst = 200000 },
+        anim = 'eating',
+        usetime = 2000,
+        notification = 'Вы съели фруктовый салат',
+        image = 'fruit_salad.png',
+    },
+},
+
+-- Напитки: жидкости восстанавливают жажду!
+['rum'] = {
+    label = 'Ром',
+    weight = 450,
+    consume = 1,
+    client = {
+        image = 'alcool_rum.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 3500,
+        cancel = true,
+        notification = 'Вы выпили ром.',
+        effect = { type = 'drunk', time = 120 }
+    }
+},
+['vodka'] = {
+    label = 'Водка',
+    weight = 450,
+    consume = 1,
+    client = {
+        image = 'alcool_vodka.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 3500,
+        cancel = true,
+        notification = 'Вы выпили водку.',
+        effect = { type = 'drunk', time = 140 }
+    }
+},
+['tequila'] = {
+    label = 'Текила',
+    weight = 450,
+    consume = 1,
+    client = {
+        image = 'alcool_tequila.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 3500,
+        cancel = true,
+        notification = 'Вы выпили текилу.',
+        effect = { type = 'drunk', time = 120 }
+    }
+},
+['whisky'] = {
+    label = 'Виски',
+    weight = 450,
+    consume = 1,
+    client = {
+        image = 'whisky1.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 3500,
+        cancel = true,
+        notification = 'Вы выпили виски.',
+        effect = { type = 'drunk', time = 120 }
+    }
+},
+['mint'] = {
+    label = 'Мята',
+    weight = 10,
+    consume = 1,
+    client = {
+        image = 'hop.png',
+        status = { hunger = 700, thirst = 500 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1500,
+        cancel = true,
+        notification = 'Вы пожевали мяту'
+    }
+},
+['syrupsugarcane'] = {
+    label = 'Сироп из тростника',
+    weight = 100,
+    consume = 1,
+    client = {
+        image = 'Syrup_ginger.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1500,
+        cancel = true,
+        notification = 'Вы попробовали сладкий сироп'
+    }
+},
+['syrupcoconut'] = {
+    label = 'Кокосовый сироп',
+    weight = 100,
+    consume = 1,
+    client = {
+        image = 'Syrup_coconut.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1500,
+        cancel = true,
+        notification = 'Вы попробовали кокосовый сироп'
+    }
+},
+['milkshake'] = {
+    label = 'Молочный коктейль',
+    weight = 300,
+    consume = 1,
+    client = {
+        image = '0.milkskake.png',
+        status = { thirst = 500000, hunger = 15000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 2000,
+        cancel = true,
+        notification = 'Вы выпили молочный коктейль'
+    }
+},
+['syrupgrenadine'] = {
+    label = 'Гренадин',
+    weight = 100,
+    consume = 1,
+    client = {
+        image = 'Syrup_pomegranate.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1500,
+        cancel = true,
+        notification = 'Вы попробовали гренадин'
+    }
+},
+['syrupcranberry'] = {
+    label = 'Клюквенный сироп',
+    weight = 100,
+    consume = 1,
+    client = {
+        image = 'Syrup_rose.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1500,
+        cancel = true,
+        notification = 'Вы попробовали клюквенный сироп'
+    }
+},
+['syruplemon'] = {
+    label = 'Лимонный сироп',
+    weight = 100,
+    consume = 1,
+    client = {
+        image = 'Syrup_lemon.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1500,
+        cancel = true,
+        notification = 'Вы попробовали лимонный сироп'
+    }
+},
+['syrupbluecuracao'] = {
+    label = 'Блю Кюрасао (сироп)',
+    weight = 100,
+    consume = 1,
+    client = {
+        image = 'curaco.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1500,
+        cancel = true,
+        notification = 'Вы попробовали blue curacao'
+    }
+},
+['soda'] = {
+    label = 'Сода',
+    weight = 250,
+    consume = 1,
+    client = {
+        image = 'Drink_SprunkLite.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1500,
+        cancel = true,
+        notification = 'Вы выпили газировку'
+    }
+},
+['strawberry'] = {
+    label = 'Клубника',
+    weight = 50,
+    consume = 1,
+    client = {
+        image = 'GlassJuice_strawberry.png',
+        status = { hunger = 1000, thirst = 800 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1000,
+        cancel = true,
+        notification = 'Вы съели клубнику'
+    }
+},
+['coffeecup'] = {
+    label = 'Чашка кофе',
+    weight = 100,
+    consume = 1,
+    client = {
+        image = 'COCKTAIL_expresso.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 2000,
+        cancel = true,
+        notification = 'Вы выпили кофе'
+    }
+},
+['syrupchocolat'] = {
+    label = 'Шоколадный сироп',
+    weight = 100,
+    consume = 1,
+    client = {
+        image = 'Syrup_chocolat.png',
+        status = { thirst = 200000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 1000,
+        cancel = true,
+        notification = 'Вы попробовали шоколадный сироп'
+    }
+},
+
+-- Готовые коктейли с эффектом алкоголя (полностью восстанавливают жажду)
+['mojito'] = {
+    label = 'Мохито',
+    weight = 350,
+    consume = 1,
+    client = {
+        image = 'cocktail_mojito.png',
+        status = { thirst = 500000, hunger = 3000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 4000,
+        cancel = true,
+        notification = 'Вы выпили освежающий Мохито!',
+        effect = { type = 'drunk', time = 30 }
+    }
+},
+
+['tequilasunrise'] = {
+    label = 'Tequila Sunrise',
+    weight = 350,
+    consume = 1,
+    client = {
+        image = 'cocktail_tequilaSunrise.png',
+        status = { thirst = 500000, hunger = 2000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 4000,
+        cancel = true,
+        notification = 'Вы выпили Tequila Sunrise! Вечеринка началась!',
+        effect = { type = 'drunk', time = 40 }
+    }
+},
+
+['pinacolada'] = {
+    label = 'Pina Colada',
+    weight = 350,
+    consume = 1,
+    client = {
+        image = 'cocktail_colada.png',
+        status = { thirst = 500000, hunger = 4000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 4000,
+        cancel = true,
+        notification = 'Вы выпили Pina Colada! Тропическое наслаждение!',
+        effect = { type = 'drunk', time = 36 }
+    }
+},
+
+['bloodymary'] = {
+    label = 'Bloody Mary',
+    weight = 350,
+    consume = 1,
+    client = {
+        image = 'cocktail_BloodyMary.png',
+        status = { thirst = 500000, hunger = 7000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 4000,
+        cancel = true,
+        notification = 'Вы выпили Bloody Mary! Становится жарко!',
+        effect = { type = 'drunk', time = 48 }
+    }
+},
+
+['cosmopolitan'] = {
+    label = 'Cosmopolitan',
+    weight = 350,
+    consume = 1,
+    client = {
+        image = 'cocktail_cosmopolitan.png',
+        status = { thirst = 500000, hunger = 2000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 4000,
+        cancel = true,
+        notification = 'Вы выпили Cosmopolitan! Вы в центре внимания!',
+        effect = { type = 'drunk', time = 32 }
+    }
+},
+
+['bluelagoon'] = {
+    label = 'Blue Lagoon',
+    weight = 350,
+    consume = 1,
+    client = {
+        image = 'cocktail_bluelagoon.png',
+        status = { thirst = 500000, hunger = 2000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 4000,
+        cancel = true,
+        notification = 'Вы выпили Blue Lagoon! Освежает и веселит!',
+        effect = { type = 'drunk', time = 28 }
+    }
+},
+
+['strawberrydaiquiri'] = {
+    label = 'Strawberry Daiquiri',
+    weight = 350,
+    consume = 1,
+    client = {
+        image = 'cocktail_strawberrydaiquiri.png',
+        status = { thirst = 500000, hunger = 5000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 4000,
+        cancel = true,
+        notification = 'Вы выпили Strawberry Daiquiri! Лето на вкус!',
+        effect = { type = 'drunk', time = 36 }
+    }
+},
+["spraycan"] = {
+    label = "Spray Can",
+    weight = 1000,
+    stack = true,
+    close = true,
+    description = "Spray Can",
+    consume = 0,
+    client = {
+		export = 'qb-graffiti.spraycan'
+	},
+    server = {},
+    icon = "spraycan.png"
+},
+
+["spraycan_ballas"] = {
+    label = "Ballas Graffiti",
+    weight = 1000,
+    stack = true,
+    close = true,
+    description = "Ballas Graffiti",
+    consume = 0,
+    client = {
+		export = 'qb-graffiti.spraycan'
+	},
+    server = {},
+    icon = "spraycan.png"
+},
+
+["spraycan_vagos"] = {
+    label = "Vagos Graffiti",
+    weight = 1000,
+    stack = true,
+    close = true,
+    description = "Vagos Graffiti",
+    consume = 0,
+    client = {
+		export = 'qb-graffiti.spraycan'
+	},
+    server = {},
+    icon = "spraycan.png"
+},
+
+["spraycan_families"] = {
+    label = "Families Graffiti",
+    weight = 1000,
+    stack = true,
+    close = true,
+    description = "Families Graffiti",
+    consume = 0,
+    client = {
+		export = 'qb-graffiti.spraycan'
+	},
+    server = {},
+    icon = "spraycan.png"
+},
+
+["spraycan_thelostmc"] = {
+    label = "The Lost MC Graffiti",
+    weight = 1000,
+    stack = true,
+    close = true,
+    description = "The Lost MC Graffiti",
+    consume = 0,
+    client = {
+		export = 'qb-graffiti.spraycan'
+	},
+    server = {},
+    icon = "spraycan.png"
+},
+
+["spraycan_streetracers"] = {
+    label = "Streetracers Graffiti",
+    weight = 1000,
+    stack = true,
+    close = true,
+    description = "Streetracers Graffiti",
+    consume = 0,
+    client = {
+		export = 'qb-graffiti.spraycan'
+	},
+    server = {},
+    icon = "spraycan.png"
+},
+
+["sprayremover"] = {
+    label = "Spray Remover",
+    weight = 100,
+    stack = true,
+    close = true,
+    description = "Spray Remover",
+    consume = 0,
+	info = {
+		model = ""
+	},
+    client = {
+		export = 'qb-graffiti.sprayremover'
+	},
+    server = {},
+    icon = "sprayremover.png"
+},
+
+['irishcoffee'] = {
+    label = 'Irish Coffee',
+    weight = 350,
+    consume = 1,
+    client = {
+        image = 'Cocktail_ExpressoMartini.png',
+        status = { thirst = 65000, hunger = 7000 },
+        anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
+        usetime = 4000,
+        cancel = true,
+        notification = 'Вы выпили Irish Coffee! Согревает душу!',
+        effect = { type = 'drunk', time = 44 }
+    }
+},
+['bodycam'] = {
+        label = 'Bodycam',
+        weight = 300,
+        stack = false,
+        close = true,
+        allowArmed = true,
+        consume = 0,
+        client = { event = 'redutzu-mdt:client:toggle-bodycam-state', image = 'bodycam.png' },
+        description = 'Let other players see your body with the most advanced bodycam on FiveM'
+},
+
 }
