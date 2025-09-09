@@ -1,0 +1,6 @@
+# FiveM and development files
+*.log
+*.tmp
+test_*.lua
+debug/
+.vscode/

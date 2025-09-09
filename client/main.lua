@@ -1241,3 +1241,18 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
         end
     end)
 end)
+
+-- Команда для восстановления тюнинга автомобиля
+RegisterCommand('taxi_restore_mods', function()
+    local playerPed = PlayerPedId()
+    
+    if IsPedInAnyVehicle(playerPed, false) then
+        local vehicle = GetVehiclePedIsIn(playerPed, false)
+        local vehicleNetId = NetworkGetNetworkIdFromEntity(vehicle)
+        
+        -- Отправляем запрос на восстановление модов
+        TriggerServerEvent('qb-taxi:server:ApplySavedMods', vehicleNetId)
+    else
+        QBCore.Functions.Notify('Вы должны находиться в автомобиле для восстановления тюнинга', 'error')
+    end
+end, false)

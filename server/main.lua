@@ -222,16 +222,15 @@ RegisterNetEvent('qb-taxi:server:TakeOutVehicle', function(vehicleModel, spawnCo
         
         SetVehicleNumberPlateText(vehicle, plate)
         
-        -- Получаем сохраненные моды из БД (если есть)
-        MySQL.query('SELECT mods FROM owned_vehicles WHERE plate = ? AND citizenid = ?', {
+        -- Поскольку это служебные автомобили, создаем запись в БД для сохранения модов
+        MySQL.insert('INSERT INTO owned_vehicles (citizenid, license, plate, vehicle, mods, state) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE mods = mods', {
+            Player.PlayerData.citizenid,
+            Player.PlayerData.license,
             plate,
-            Player.PlayerData.citizenid
-        }, function(result)
-            if result[1] and result[1].mods then
-                local savedMods = json.decode(result[1].mods)
-                SetVehicleMods(vehicle, savedMods)
-            end
-            
+            json.encode({model = GetHashKey(vehicleModel), plate = plate}),
+            json.encode({}), -- Пустые моды для начала
+            1
+        }, function(insertId)
             -- Устанавливаем автомобиль на позицию
             SetEntityCoords(vehicle, spawnCoords.x, spawnCoords.y, spawnCoords.z)
             SetEntityHeading(vehicle, spawnCoords.w or 0.0)
@@ -244,7 +243,7 @@ RegisterNetEvent('qb-taxi:server:TakeOutVehicle', function(vehicleModel, spawnCo
             TriggerClientEvent('qb-taxi:client:VehicleSpawned', src, netId, plate)
             
             -- Уведомляем игрока
-            TriggerClientEvent('QBCore:Notify', src, 'Автомобиль вызван из гаража с сохраненным тюнингом', 'success')
+            TriggerClientEvent('QBCore:Notify', src, 'Служебное такси готово к работе', 'success')
         end)
     end, spawnCoords, true)
 end)
@@ -297,8 +296,8 @@ RegisterNetEvent('qb-taxi:server:GiveVehicleKeys', function(plate)
     
     if not Player then return end
     
-    -- Проверяем, владеет ли игрок этим автомобилем
-    MySQL.query('SELECT * FROM owned_vehicles WHERE plate = ? AND citizenid = ?', {
+    -- Проверяем, владеет ли игрок этим автомобилем или это служебное такси
+    MySQL.query('SELECT * FROM owned_vehicles WHERE plate = ? AND (citizenid = ? OR plate LIKE "TAXI%")', {
         plate,
         Player.PlayerData.citizenid
     }, function(result)
@@ -307,6 +306,31 @@ RegisterNetEvent('qb-taxi:server:GiveVehicleKeys', function(plate)
             TriggerEvent('vehiclekeys:server:SetVehicleOwner', Player.PlayerData.citizenid, plate)
             TriggerClientEvent('vehiclekeys:client:SetOwner', src, plate)
             TriggerClientEvent('QBCore:Notify', src, 'Ключи от автомобиля получены', 'success')
+        end
+    end)
+end)
+
+-- Событие для применения сохраненных модов к существующему автомобилю
+RegisterNetEvent('qb-taxi:server:ApplySavedMods', function(vehicleNetId)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    
+    if not Player then return end
+    
+    local vehicle = NetworkGetEntityFromNetworkId(vehicleNetId)
+    if not DoesEntityExist(vehicle) then return end
+    
+    local plate = GetVehicleNumberPlateText(vehicle)
+    
+    -- Получаем сохраненные моды из БД
+    MySQL.query('SELECT mods FROM owned_vehicles WHERE plate = ? AND citizenid = ?', {
+        plate,
+        Player.PlayerData.citizenid
+    }, function(result)
+        if result[1] and result[1].mods then
+            local savedMods = json.decode(result[1].mods)
+            SetVehicleMods(vehicle, savedMods)
+            TriggerClientEvent('QBCore:Notify', src, 'Тюнинг автомобиля восстановлен', 'success')
         end
     end)
 end)
