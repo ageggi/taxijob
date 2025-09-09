@@ -769,16 +769,14 @@ RegisterNetEvent('qb-taxi:client:TakeVehicle', function(data)
         local coords = vector3(Config.CabSpawns[SpawnPoint].x, Config.CabSpawns[SpawnPoint].y, Config.CabSpawns[SpawnPoint].z)
         local CanSpawn = IsSpawnPointClear(coords, 2.0)
         if CanSpawn then
-            QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
-                local veh = NetToVeh(netId)
-                SetVehicleNumberPlateText(veh, 'TAXI' .. tostring(math.random(1000, 9999)))
-                exports['LegacyFuel']:SetFuel(veh, 100.0)
-                closeMenuFull()
-                SetEntityHeading(veh, Config.CabSpawns[SpawnPoint].w)
-                TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                TriggerEvent('vehiclekeys:client:SetOwner', QBCore.Functions.GetPlate(veh))
-                SetVehicleEngineOn(veh, true, true)
-            end, data.model, coords, true)
+            -- Используем новую серверную функцию с сохранением/загрузкой модов
+            TriggerServerEvent('qb-taxi:server:TakeOutVehicle', data.model, {
+                x = coords.x,
+                y = coords.y,
+                z = coords.z,
+                w = Config.CabSpawns[SpawnPoint].w
+            })
+            closeMenuFull()
         else
             QBCore.Functions.Notify(Lang:t('info.no_spawn_point'), 'error')
         end
@@ -929,7 +927,13 @@ CreateThread(function()
                                 DrawText3D(Config.parkLocation.x, Config.parkLocation.y, Config.parkLocation.z + 0.3, Lang:t('info.vehicle_parking'))
                                 if IsControlJustReleased(0, 38) then
                                     if IsPedInAnyVehicle(PlayerPedId(), false) then
-                                        DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
+                                        local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
+                                        local vehicleNetId = NetworkGetNetworkIdFromEntity(vehicle)
+                                        
+                                        -- Отправляем данные автомобиля для сохранения модов
+                                        TriggerServerEvent('qb-taxi:server:StoreVehicle', {
+                                            netId = vehicleNetId
+                                        })
                                     end
                                 end
                             else
@@ -1154,13 +1158,20 @@ CreateThread(function()
                 if IsPedInAnyVehicle(PlayerPedId(), false) then
                     local ped = PlayerPedId()
                     local vehicle = GetVehiclePedIsIn(ped, false)
+                    local vehicleNetId = NetworkGetNetworkIdFromEntity(vehicle)
+                    
                     if meterIsOpen then
                         TriggerEvent('qb-taxi:client:toggleMeter')
                         meterActive = false
                     end
+                    
+                    -- Отправляем данные автомобиля для сохранения модов
+                    TriggerServerEvent('qb-taxi:server:StoreVehicle', {
+                        netId = vehicleNetId
+                    })
+                    
                     TaskLeaveVehicle(PlayerPedId(), vehicle, 0)
                     Wait(2000) -- 2 second delay just to ensure the player is out of the vehicle
-                    DeleteVehicle(vehicle)
                     QBCore.Functions.Notify(Lang:t('info.taxi_returned'), 'success')
                 end
             end
@@ -1191,6 +1202,42 @@ CreateThread(function()
         else
             dutyKey = false
             exports['qb-core']:HideText()
+        end
+    end)
+end)
+
+-- Обработчик успешного вызова автомобиля из гаража
+RegisterNetEvent('qb-taxi:client:VehicleSpawned', function(netId, plate)
+    local vehicle = NetToVeh(netId)
+    
+    -- Устанавливаем топливо на 100%
+    if GetResourceState('LegacyFuel') == "started" then
+        exports['LegacyFuel']:SetFuel(vehicle, 100.0)
+    end
+    
+    -- Высаживаем игрока в автомобиль
+    TaskWarpPedIntoVehicle(PlayerPedId(), vehicle, -1)
+    
+    -- Запускаем двигатель
+    SetVehicleEngineOn(vehicle, true, true)
+    
+    -- Запрашиваем ключи от автомобиля (повторно для гарантии)
+    TriggerServerEvent('qb-taxi:server:GiveVehicleKeys', plate)
+end)
+
+-- Обработчик спавна автомобиля при входе в игру (для выдачи ключей)
+AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+    CreateThread(function()
+        Wait(5000) -- Ждем немного для инициализации
+        local playerPed = PlayerPedId()
+        
+        -- Проверяем, находится ли игрок в автомобиле
+        if IsPedInAnyVehicle(playerPed, false) then
+            local vehicle = GetVehiclePedIsIn(playerPed, false)
+            local plate = GetVehicleNumberPlateText(vehicle)
+            
+            -- Запрашиваем ключи если это принадлежащий игроку автомобиль
+            TriggerServerEvent('qb-taxi:server:GiveVehicleKeys', plate)
         end
     end)
 end)
